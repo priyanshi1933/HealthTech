@@ -1,0 +1,51 @@
+import { Routes, Route } from "react-router-dom";
+import Login from "./Components/Login";
+import Register from "./Components/Register";
+import Profile from "./Components/Profile";
+import Verify2FA from "./Components/Verify2FA";
+import DoctorsList from "./Components/DoctorsList";
+import SingleDoctor from "./Components/SingleDoctor";
+import CreateDoctorProfile from "./Components/Doctor/CreateDoctorProfile";
+import DoctorProfile from "./Components/Doctor/DoctorProfile";
+import UpdateDoctorProfile from "./Components/Doctor/UpdateDoctorProfile";
+import AdminDashboard from "./Components/Admin/AdminDashboard";
+import ProtectedRoute from "./Components/ProtectedRoute";
+import Navbar from "./Components/Navbar";
+
+export default function App() {
+  return (
+    <>
+    <Navbar/>
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/doctors" element={<DoctorsList />} />
+      <Route path="/doctors/:id" element={<SingleDoctor />} />
+
+      {/* ── Auth ─────────────────────────── */}
+      <Route path="/verify-2fa" element={
+        <ProtectedRoute><Verify2FA /></ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute><Profile /></ProtectedRoute>
+      } />
+
+      {/* ── Doctor ───────────────────────── */}
+      <Route path="/doctor/profile" element={
+        <ProtectedRoute><DoctorProfile /></ProtectedRoute>
+      } />
+      <Route path="/doctor/create-profile" element={
+        <ProtectedRoute><CreateDoctorProfile /></ProtectedRoute>
+      } />
+      <Route path="/doctor/update-profile" element={
+        <ProtectedRoute><UpdateDoctorProfile /></ProtectedRoute>
+      } />
+
+      {/* ── Admin ────────────────────────── */}
+      <Route path="/admin" element={
+        <ProtectedRoute><AdminDashboard /></ProtectedRoute>
+      } />
+    </Routes>
+    </>
+  );
+}

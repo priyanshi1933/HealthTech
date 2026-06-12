@@ -1,0 +1,114 @@
+POST http://localhost:3000/register 
+content-type: application/json
+
+{
+    "name":"Priyanshi",
+    "email": "priyanshi@gmail.com",
+    "password": "Priyanshi@123",
+    "role":"admin"
+}
+
+###
+POST http://localhost:3000/login
+content-type: application/json
+
+{
+    "email": "priyanshi@gmail.com",
+    "password": "Priyanshi@123"
+}
+
+###
+
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "email": "neel@gmail.com",
+  "password": "Neel@12345",
+  "totpToken": "076739"
+}
+
+###
+GET http://localhost:3000/users
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTI0MzA3NCwiZXhwIjoxNzgxMjQ2Njc0fQ.6A2_kHBEVeKG-w1icEDU44_naka7cu3wNM3d7oreqCk
+
+###
+GET http://localhost:3000/profile
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTI0MzA3NCwiZXhwIjoxNzgxMjQ2Njc0fQ.6A2_kHBEVeKG-w1icEDU44_naka7cu3wNM3d7oreqCk
+
+
+###
+POST http://localhost:3000/verify-2fa
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJhNTg2NTQwOGYwNjljMTNjYTY1YSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODEyNTY3ODgsImV4cCI6MTc4MTI2MDM4OH0.PQxQ-qPqnzSu9vqse2cBK64Cx1SHlCJMDsVfPbynceI
+
+{
+  "token": "545656"
+}
+
+
+
+###
+POST http://localhost:3000/profile/create
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJhNTg2NTQwOGYwNjljMTNjYTY1YSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODEyNTcwMjgsImV4cCI6MTc4MTI2MDYyOH0.NxDJ1JXjhlnZDLySqwYtUPdzY0BKxiJ15we5jrYtVuw
+
+{
+  "specialty": "Cardiology",
+  "qualifications": ["MBBS", "MD"],
+  "experience": 8,
+  "fee": 500,
+  "languages": ["English", "Hindi"],
+  "bio": "Experienced cardiologist"
+}
+
+###
+
+PUT http://localhost:3000/profile/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJhNTg2NTQwOGYwNjljMTNjYTY1YSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODEyNTcwMjgsImV4cCI6MTc4MTI2MDYyOH0.NxDJ1JXjhlnZDLySqwYtUPdzY0BKxiJ15we5jrYtVuw
+
+{
+  "fee": 600,
+  "bio": "Updated bio here",
+  "languages": ["English", "Hindi", "Gujarati"]
+}
+
+###
+GET http://localhost:3000/profile/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJhNTg2NTQwOGYwNjljMTNjYTY1YSIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODEyNTcwMjgsImV4cCI6MTc4MTI2MDYyOH0.NxDJ1JXjhlnZDLySqwYtUPdzY0BKxiJ15we5jrYtVuw
+
+###
+GET http://localhost:3000/doctor
+
+###
+GET http://localhost:3000/6a2bd40022569c21eb68631a
+
+### Admin: Get All Doctors
+GET http://localhost:3000/admin/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTI1NzY1NiwiZXhwIjoxNzgxMjYxMjU2fQ.XVHiPxQt11M71qNn7vMYs9oUNeJ1qW_ju7cebWxhAKc
+
+###
+
+### Admin: Get Pending Doctors
+GET http://localhost:3000/admin/pending
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTI1NzY1NiwiZXhwIjoxNzgxMjYxMjU2fQ.XVHiPxQt11M71qNn7vMYs9oUNeJ1qW_ju7cebWxhAKc
+
+###
+
+### Admin: Approve Doctor
+PATCH http://localhost:3000/admin/approve/6a2bd40022569c21eb68631a
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTI1NzY1NiwiZXhwIjoxNzgxMjYxMjU2fQ.XVHiPxQt11M71qNn7vMYs9oUNeJ1qW_ju7cebWxhAKc
+
+###
+
+### Admin: Reject Doctor
+PATCH http://localhost:3000/admin/reject/6a2bd40022569c21eb68631a
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTI1NzY1NiwiZXhwIjoxNzgxMjYxMjU2fQ.XVHiPxQt11M71qNn7vMYs9oUNeJ1qW_ju7cebWxhAKc
+
+{
+  "note": "Qualifications document is missing or invalid"
+}

@@ -1,0 +1,58 @@
+body {
+  background: #f4f7fb;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #06b6d4
+  );
+}
+
+.auth-card {
+  border: none;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0,0,0,.15);
+}
+
+.left-panel {
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #0ea5e9
+  );
+  color: white;
+  padding: 3rem;
+}
+
+.right-panel {
+  padding: 3rem;
+  background: white;
+}
+
+.form-control {
+  height: 50px;
+  border-radius: 12px;
+}
+
+.btn-main {
+  background: #2563eb;
+  border: none;
+  border-radius: 12px;
+  height: 50px;
+  font-weight: 600;
+}
+
+.btn-main:hover {
+  background: #1d4ed8;
+}
+
+.profile-card {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+}
