@@ -5,6 +5,7 @@ import router from "./routes/route";
 import cors, { CorsOptions } from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
+import "./services/email.service";
 
 dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 

@@ -13,8 +13,8 @@ POST http://localhost:3000/login
 content-type: application/json
 
 {
-    "email": "priyanshi@gmail.com",
-    "password": "Priyanshi@123"
+    "email": "nishtha@gmail.com",
+    "password": "12345678"
 }
 
 ###
@@ -23,9 +23,9 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "email": "neel@gmail.com",
-  "password": "Neel@12345",
-  "totpToken": "076739"
+  "email": "yusuf@gmail.com",
+  "password": "Yusuf@12345",
+  "totpToken": "347863"
 }
 
 ###
@@ -112,3 +112,189 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxO
 {
   "note": "Qualifications document is missing or invalid"
 }
+
+### ─── AVAILABILITY ROUTES ──────────────────────────────────────
+
+### Add Recurring Slot (Monday 9am-5pm, 30min slots)
+POST http://localhost:3000/availability/recurring
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "dayOfWeek": 1,
+  "startTime": "09:00",
+  "endTime": "17:00",
+  "slotDuration": 30
+}
+
+###
+POST http://localhost:3000/availability/recurring
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE1MDAzMDYsImV4cCI6MTc4MTUwMzkwNn0.UfNqS9RWBmGRS5EgNzNn9y4gUw5Lj9xCLMs_mFIyw_w
+
+{
+  "dayOfWeek": 4,
+  "startTime": "09:00",
+  "endTime": "17:00",
+  "slotDuration": 30,
+  "timezone": "Asia/Kolkata"
+}
+
+### Add Recurring Slot (Tuesday 10am-2pm, 45min slots)
+POST http://localhost:3000/availability/recurring
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "dayOfWeek": 2,
+  "startTime": "10:00",
+  "endTime": "14:00",
+  "slotDuration": 45
+}
+
+###
+
+### Add Recurring Slot (Wednesday 9am-1pm, 60min slots)
+POST http://localhost:3000/availability/recurring
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "dayOfWeek": 3,
+  "startTime": "09:00",
+  "endTime": "13:00",
+  "slotDuration": 60
+}
+
+###
+
+### Add Recurring Slot (Friday 2pm-6pm, 15min slots)
+POST http://localhost:3000/availability/recurring
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "dayOfWeek": 5,
+  "startTime": "14:00",
+  "endTime": "18:00",
+  "slotDuration": 15
+}
+
+###
+
+### Block a Date (Leave)
+POST http://localhost:3000/availability/block
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "blockDate": "2026-06-25",
+  "blockReason": "Personal Leave"
+}
+
+###
+
+### Block a Date (Holiday)
+POST http://localhost:3000/availability/block
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "blockDate": "2026-08-15",
+  "blockReason": "Independence Day Holiday"
+}
+
+###
+
+### Block a Date (Conference)
+POST http://localhost:3000/availability/block
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+{
+  "blockDate": "2026-07-10",
+  "blockReason": "Medical Conference"
+}
+
+###
+
+### Get My Availability (Doctor)
+GET http://localhost:3000/availability/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+### Get Slots — patient in Kolkata sees IST times
+GET http://localhost:3000/slots?doctorId=6a2bdc7b22569c21eb68631c&date=2026-06-22&timezone=Asia/Kolkata
+
+### Get Doctor Availability by doctorId (Public)
+GET http://localhost:3000/availability/6a2bdc7b22569c21eb68631c
+
+### Get Slots — patient in London sees GMT times
+GET http://localhost:3000/slots?doctorId=6a2bdc7b22569c21eb68631c&date=2026-06-22&timezone=Europe/London
+
+### Get Slots for a specific date (Normal working day)
+GET http://localhost:3000/slots?doctorId=6a2bdc7b22569c21eb68631c&date=2026-06-16
+
+###
+
+### Get Slots for a specific date (Blocked day — should return blocked:true)
+GET http://localhost:3000/slots?doctorId=6a2bdc7b22569c21eb68631c&date=2026-06-25
+
+###
+
+### Get Slots for a specific date (No availability day e.g. Sunday)
+GET http://localhost:3000/slots?doctorId=6a2bdc7b22569c21eb68631c&date=2026-06-21
+
+###
+
+### Delete Recurring Slot by ID
+DELETE http://localhost:3000/availability/recurring/6a2f7de0f47899c6c55e8f99
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+###
+
+### Delete Block Date by ID
+DELETE http://localhost:3000/availability/block/6a2f7e1af47899c6c55e8f9c
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE0OTcyMDYsImV4cCI6MTc4MTUwMDgwNn0.NhrTMUd7tNebzOJkEtJSSxhnBJ55heM5nb1OhrJ-k4c
+
+### Book Appointment
+POST http://localhost:3000/appointments/book
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5YmVlOGVmZTEwNDI5NTU2YzU4MCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNTAxOTM5LCJleHAiOjE3ODE1MDU1Mzl9.EbpA4BOpXBUl9QtSE2I1MHu0ALnR257bd9ciBuGRRGE
+
+{
+  "doctorId": "6a2bdc7b22569c21eb68631c",
+  "slotTimeUTC": "2026-06-23T03:30:00.000Z",
+  "patientTimezone": "Asia/Kolkata"
+}
+
+###
+
+### Get My Appointments (patient)
+GET http://localhost:3000/appointments/my
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5YmVlOGVmZTEwNDI5NTU2YzU4MCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNTAxOTM5LCJleHAiOjE3ODE1MDU1Mzl9.EbpA4BOpXBUl9QtSE2I1MHu0ALnR257bd9ciBuGRRGE
+
+###
+
+### Get Doctor Appointments
+GET http://localhost:3000/appointments/doctor
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE1MDIxNjgsImV4cCI6MTc4MTUwNTc2OH0.5uC2SnyiEZ_uw8VrnLFDQInADjlm275V_gjIVzWIDZc
+
+###
+
+### Cancel Appointment
+PATCH http://localhost:3000/appointments/6a2f9081bdfe4f3c119fc3be/cancel
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5YmVlOGVmZTEwNDI5NTU2YzU4MCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNTAyMjE1LCJleHAiOjE3ODE1MDU4MTV9.Q6TbWoXkkGW36Q68dg83OAI1SfCenbLfZyj_Lt8Rcgc
+
+{ "reason": "Schedule conflict" }
+
+###
+
+### Complete Appointment (doctor)
+PATCH http://localhost:3000/appointments/6a2f9081bdfe4f3c119fc3be/complete
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE1MTAwODYsImV4cCI6MTc4MTUxMzY4Nn0.0EEbPe4raG-BkNh_3sX42CqKFbgzJHzbEaCbmgZcDTE
+
+###
+
+### Check slots — booked slot shows available:false
+GET http://localhost:3000/slots?doctorId=DOCTOR_ID&date=2026-06-23&timezone=Asia/Kolkata

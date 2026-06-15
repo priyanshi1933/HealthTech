@@ -27,13 +27,11 @@ export default function Register() {
 
       console.log(res.data);
 
-      // Save JWT
       localStorage.setItem(
         "token",
         res.data.token
       );
 
-      // Doctor Registration
       if (
         form.role === "doctor" &&
         res.data.twoFactor
@@ -51,9 +49,8 @@ export default function Register() {
         return;
       }
 
-      // Patient/Admin
       alert("Registration Successful");
-      navigate("/profile");
+      navigate("/");
 
     } catch (err: any) {
       console.log(err.response?.data);

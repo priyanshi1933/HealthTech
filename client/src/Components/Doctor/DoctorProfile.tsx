@@ -14,7 +14,7 @@ export default function DoctorProfile() {
         const res = await api.get("/profile/me");
         setProfile(res.data.data);
       } catch {
-        setNoProfile(true); // ✅ don't redirect, show message
+        setNoProfile(true); 
       } finally {
         setLoading(false);
       }
@@ -28,7 +28,6 @@ export default function DoctorProfile() {
     </div>
   );
 
-  // ✅ No profile yet — show create prompt
   if (noProfile) return (
     <div style={{ minHeight: "100vh", background: "#f4f7fb", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{

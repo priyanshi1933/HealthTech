@@ -21,19 +21,16 @@ export default function Login() {
         ...(showOtp && { totpToken: otp }),
       });
 
-      // Doctor password ok but OTP not submitted yet
       if (res.data.requiresTwoFactor) {
         setShowOtp(true);
         setLoading(false);
         return;
       }
 
-      // Save token + role
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
       localStorage.setItem("name", res.data.name); 
 
-      // ✅ Navigate based on role
       const role = res.data.role;
       if (role === "admin") {
         navigate("/admin");

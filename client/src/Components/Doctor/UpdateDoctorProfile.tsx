@@ -22,7 +22,6 @@ export default function UpdateDoctorProfile() {
       const res = await api.get("/profile/me");
       const p = res.data.data;
 
-      // ✅ block rejected doctors from editing
       if (p.verificationStatus === "rejected") {
         navigate("/doctor/profile");
         return;

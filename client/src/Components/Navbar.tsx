@@ -13,19 +13,20 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={{
-      background: "linear-gradient(135deg, #2563eb, #06b6d4)",
-      padding: "0 2rem",
-      height: "65px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "space-between",
-      boxShadow: "0 2px 20px rgba(0,0,0,0.15)",
-      position: "sticky",
-      top: 0,
-      zIndex: 999,
-    }}>
-
+    <nav
+      style={{
+        background: "linear-gradient(135deg, #2563eb, #06b6d4)",
+        padding: "0 2rem",
+        height: "65px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        boxShadow: "0 2px 20px rgba(0,0,0,0.15)",
+        position: "sticky",
+        top: 0,
+        zIndex: 999,
+      }}
+    >
       {/* Logo */}
       <Link to="/" style={{ textDecoration: "none" }}>
         <span style={{ color: "white", fontWeight: 800, fontSize: "1.3rem" }}>
@@ -35,10 +36,10 @@ export default function Navbar() {
 
       {/* Links by role */}
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-
         {role === "patient" && (
           <>
             <NavLink to="/doctors">Find Doctors</NavLink>
+             <NavLink to="/appointments">My Appointments</NavLink>  
             <NavLink to="/profile">Profile</NavLink>
           </>
         )}
@@ -46,6 +47,8 @@ export default function Navbar() {
         {role === "doctor" && (
           <>
             <NavLink to="/doctor/profile">My Profile</NavLink>
+            <NavLink to="/doctor/availability">Availability</NavLink>
+            <NavLink to="/appointments/doctor">Appointments</NavLink> 
             <NavLink to="/doctors">Doctors</NavLink>
           </>
         )}
@@ -58,14 +61,16 @@ export default function Navbar() {
         )}
 
         {/* User info + logout */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem",
-          background: "rgba(255,255,255,0.15)",
-          borderRadius: "50px",
-          padding: "6px 14px",
-        }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.75rem",
+            background: "rgba(255,255,255,0.15)",
+            borderRadius: "50px",
+            padding: "6px 14px",
+          }}
+        >
           <img
             src={`https://ui-avatars.com/api/?name=${name}&background=ffffff&color=2563eb&size=32`}
             style={{ borderRadius: "50%", width: 32, height: 32 }}
@@ -73,14 +78,16 @@ export default function Navbar() {
           <span style={{ color: "white", fontWeight: 600, fontSize: "0.9rem" }}>
             {name}
           </span>
-          <span style={{
-            background: "rgba(255,255,255,0.2)",
-            color: "white",
-            fontSize: "0.7rem",
-            padding: "2px 8px",
-            borderRadius: "20px",
-            textTransform: "capitalize",
-          }}>
+          <span
+            style={{
+              background: "rgba(255,255,255,0.2)",
+              color: "white",
+              fontSize: "0.7rem",
+              padding: "2px 8px",
+              borderRadius: "20px",
+              textTransform: "capitalize",
+            }}
+          >
             {role}
           </span>
           <button
@@ -99,7 +106,6 @@ export default function Navbar() {
             Logout
           </button>
         </div>
-
       </div>
     </nav>
   );
@@ -107,17 +113,21 @@ export default function Navbar() {
 
 function NavLink({ to, children }: { to: string; children: React.ReactNode }) {
   return (
-    <Link to={to} style={{
-      color: "rgba(255,255,255,0.85)",
-      textDecoration: "none",
-      fontWeight: 600,
-      fontSize: "0.95rem",
-      padding: "4px 0",
-      borderBottom: "2px solid transparent",
-      transition: "all 0.2s",
-    }}
-      onMouseEnter={e => (e.currentTarget.style.color = "white")}
-      onMouseLeave={e => (e.currentTarget.style.color = "rgba(255,255,255,0.85)")}
+    <Link
+      to={to}
+      style={{
+        color: "rgba(255,255,255,0.85)",
+        textDecoration: "none",
+        fontWeight: 600,
+        fontSize: "0.95rem",
+        padding: "4px 0",
+        borderBottom: "2px solid transparent",
+        transition: "all 0.2s",
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.color = "white")}
+      onMouseLeave={(e) =>
+        (e.currentTarget.style.color = "rgba(255,255,255,0.85)")
+      }
     >
       {children}
     </Link>
