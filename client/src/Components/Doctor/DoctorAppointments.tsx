@@ -337,6 +337,23 @@ export default function DoctorAppointments() {
                   </div>
                 )}
 
+                {apt.status === "confirmed" && (
+                  <button
+                    onClick={() => navigate(`/video/${apt._id}`)}
+                    style={{
+                      padding: "8px 20px",
+                      borderRadius: "10px",
+                      border: "none",
+                      background: "linear-gradient(135deg,#10b981,#059669)",
+                      color: "white",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                    }}
+                  >
+                    Join Video Call
+                  </button>
+                )}
+
                 {apt.status === "completed" && (
                   <button
                     onClick={() => navigate(`/prescriptions/write/${apt._id}`)}

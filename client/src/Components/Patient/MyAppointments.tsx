@@ -368,6 +368,25 @@ export default function MyAppointments() {
                   </div>
                 )}
 
+                {apt.status === "confirmed" && (
+                  <button
+                    onClick={() => navigate(`/video/${apt._id}`)}
+                    style={{
+                      marginTop: "10px",
+                      padding: "8px 20px",
+                      borderRadius: "10px",
+                      border: "none",
+                      background: "linear-gradient(135deg,#10b981,#059669)",
+                      color: "white",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      fontSize: "0.88rem",
+                    }}
+                  >
+                    Join Video Call
+                  </button>
+                )}
+
                 {/* Cancellation info */}
                 {apt.status === "cancelled" &&
                   emailPreviews[`cancel_${apt._id}`] && (

@@ -7,6 +7,7 @@ import {
   sendCancellationEmail,
 } from "./email.service";
 import { UserModel } from "../models/user.model";
+import crypto from "crypto";
 
 export const bookAppointment = async (
   patientId: string,
@@ -16,6 +17,7 @@ export const bookAppointment = async (
     patientTimezone: string;
   },
 ): Promise<{ appointment: any; emailPreviewUrl: string | null }> => {
+  const roomId = `health-${crypto.randomBytes(6).toString("hex")}`;
   const doctor = await DoctorModel.findById(data.doctorId).populate(
     "userId",
     "name email",
@@ -66,6 +68,7 @@ export const bookAppointment = async (
     status: "confirmed",
     paymentStatus: "paid",
     paymentId,
+    roomId, 
   });
 
   const appointmentObj = appointment.toObject();

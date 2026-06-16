@@ -17,6 +17,7 @@ import DoctorAppointments from "./Components/Doctor/DoctorAppointments";
 import WritePrescription from "./Components/Doctor/WritePrescription";
 import MyPrescriptions from "./Components/Patient/MyPrescriptions";
 import DoctorPrescriptions from "./Components/Doctor/DoctorPrescriptions";
+import VideoConsult from "./Components/VideoConsult";
 
 export default function App() {
   return (
@@ -115,6 +116,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <DoctorPrescriptions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/video/:appointmentId"
+          element={
+            <ProtectedRoute>
+              <VideoConsult />
             </ProtectedRoute>
           }
         />

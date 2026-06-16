@@ -1,9 +1,12 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const name = localStorage.getItem("name");
+
+  const location = useLocation();
+  if (!role || location.pathname.startsWith("/video")) return null;
 
   if (!role) return null;
 
@@ -40,7 +43,7 @@ export default function Navbar() {
           <>
             <NavLink to="/doctors">Find Doctors</NavLink>
             <NavLink to="/appointments">My Appointments</NavLink>
-            <NavLink to="/prescriptions/my">My Prescriptions</NavLink> 
+            <NavLink to="/prescriptions/my">My Prescriptions</NavLink>
             <NavLink to="/profile">Profile</NavLink>
           </>
         )}

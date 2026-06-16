@@ -11,6 +11,7 @@ export interface IAppointment extends Document {
   status: "pending" | "confirmed" | "cancelled" | "completed" | "refunded";
   fee: number;
   paymentStatus: "pending" | "paid" | "refunded";
+  roomId?: string
   paymentId?: string;
   notes?: string;
   cancelledBy?: "patient" | "doctor" | "admin";
@@ -46,6 +47,7 @@ const AppointmentSchema = new Schema<IAppointment>(
       enum: ["pending", "paid", "refunded"],
       default: "pending",
     },
+    roomId: { type: String, default: null },
     paymentId: { type: String, default: null },
     notes: { type: String, default: null },
     cancelledBy: {
