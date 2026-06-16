@@ -16,33 +16,33 @@ export default function UpdateDoctorProfile() {
     bio: "",
   });
 
- useEffect(() => {
-  const fetch = async () => {
-    try {
-      const res = await api.get("/profile/me");
-      const p = res.data.data;
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const res = await api.get("/profile/me");
+        const p = res.data.data;
 
-      if (p.verificationStatus === "rejected") {
+        if (p.verificationStatus === "rejected") {
+          navigate("/doctor/profile");
+          return;
+        }
+
+        setForm({
+          specialty: p.specialty,
+          qualifications: p.qualifications.join(", "),
+          experience: String(p.experience),
+          fee: String(p.fee),
+          languages: p.languages.join(", "),
+          bio: p.bio,
+        });
+      } catch {
         navigate("/doctor/profile");
-        return;
+      } finally {
+        setFetching(false);
       }
-
-      setForm({
-        specialty: p.specialty,
-        qualifications: p.qualifications.join(", "),
-        experience: String(p.experience),
-        fee: String(p.fee),
-        languages: p.languages.join(", "),
-        bio: p.bio,
-      });
-    } catch {
-      navigate("/doctor/profile");
-    } finally {
-      setFetching(false);
-    }
-  };
-  fetch();
-}, []);
+    };
+    fetch();
+  }, []);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,15 +66,19 @@ export default function UpdateDoctorProfile() {
     }
   };
 
-  if (fetching) return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100">
-      <div className="spinner-border text-primary" />
-    </div>
-  );
+  if (fetching)
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="spinner-border text-primary" />
+      </div>
+    );
 
   return (
     <div className="container py-5">
-      <div className="card profile-card p-5 mx-auto" style={{ maxWidth: "700px" }}>
+      <div
+        className="card profile-card p-5 mx-auto"
+        style={{ maxWidth: "700px" }}
+      >
         <h2 className="fw-bold mb-1">Update Profile</h2>
         <p className="text-muted mb-4">Update your doctor profile details.</p>
 
@@ -94,29 +98,39 @@ export default function UpdateDoctorProfile() {
           <div className="mb-3">
             <label className="form-label fw-semibold">
               Qualifications
-              <span className="text-muted fw-normal ms-1">(comma separated)</span>
+              <span className="text-muted fw-normal ms-1">
+                (comma separated)
+              </span>
             </label>
             <input
               className="form-control"
               value={form.qualifications}
-              onChange={(e) => setForm({ ...form, qualifications: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, qualifications: e.target.value })
+              }
               required
             />
           </div>
 
           <div className="row">
             <div className="col-md-6 mb-3">
-              <label className="form-label fw-semibold">Experience (years)</label>
+              <label className="form-label fw-semibold">
+                Experience (years)
+              </label>
               <input
                 type="number"
                 className="form-control"
                 value={form.experience}
-                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, experience: e.target.value })
+                }
                 required
               />
             </div>
             <div className="col-md-6 mb-3">
-              <label className="form-label fw-semibold">Consultation Fee (₹)</label>
+              <label className="form-label fw-semibold">
+                Consultation Fee (₹)
+              </label>
               <input
                 type="number"
                 className="form-control"
@@ -130,12 +144,14 @@ export default function UpdateDoctorProfile() {
           <div className="mb-3">
             <label className="form-label fw-semibold">
               Languages
-              <span className="text-muted fw-normal ms-1">(comma separated)</span>
+              <span className="text-muted fw-normal ms-1">
+                (comma separated)
+              </span>
             </label>
             <input
               className="form-control"
               value={form.languages}
-              onChange={(e) => setForm({ ...form, languages:e.target.value })}
+              onChange={(e) => setForm({ ...form, languages: e.target.value })}
               required
             />
           </div>
@@ -151,7 +167,11 @@ export default function UpdateDoctorProfile() {
           </div>
 
           <div className="d-flex gap-3">
-            <button type="submit" disabled={loading} className="btn btn-main text-white w-100">
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn btn-main text-white w-100"
+            >
               {loading ? "Saving..." : "Save Changes"}
             </button>
             <button

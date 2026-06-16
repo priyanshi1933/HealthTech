@@ -11,7 +11,7 @@ export const createDoctorProfile = async (
     fee: number;
     languages: string[];
     bio?: string;
-  }
+  },
 ) => {
   const user = await UserModel.findById(userId);
   if (!user || user.role !== "doctor") {
@@ -34,12 +34,12 @@ export const updateDoctorProfile = async (
     fee: number;
     languages: string[];
     bio: string;
-  }>
+  }>,
 ) => {
   const profile = await DoctorModel.findOneAndUpdate(
     { userId },
     { $set: data },
-    { new: true, runValidators: true }
+    { new: true, runValidators: true },
   );
   if (!profile) throw new Error("Doctor profile not found");
   return profile;
@@ -47,8 +47,10 @@ export const updateDoctorProfile = async (
 
 // ── Doctor: get own profile ───────────────────────────────────
 export const getDoctorProfileByUserId = async (userId: string) => {
-  const profile = await DoctorModel.findOne({ userId })
-    .populate("userId", "name email");
+  const profile = await DoctorModel.findOne({ userId }).populate(
+    "userId",
+    "name email",
+  );
   if (!profile) throw new Error("Doctor profile not found");
   return profile;
 };
@@ -74,8 +76,10 @@ export const getDoctorById = async (doctorId: string) => {
 
 // ── Admin: all pending doctors ────────────────────────────────
 export const getPendingDoctors = async () => {
-  return await DoctorModel.find({ verificationStatus: "pending" })
-    .populate("userId", "name email createdAt");
+  return await DoctorModel.find({ verificationStatus: "pending" }).populate(
+    "userId",
+    "name email createdAt",
+  );
 };
 
 // ── Admin: all doctors (any status) ──────────────────────────
@@ -104,7 +108,7 @@ export const approveDoctor = async (doctorId: string, adminId: string) => {
         verificationNote: null,
       },
     },
-    { new: true }
+    { new: true },
   ).populate("userId", "name email");
 };
 
@@ -112,7 +116,7 @@ export const approveDoctor = async (doctorId: string, adminId: string) => {
 export const rejectDoctor = async (
   doctorId: string,
   adminId: string,
-  note: string
+  note: string,
 ) => {
   const doctor = await DoctorModel.findById(doctorId);
   if (!doctor) throw new Error("Doctor not found");
@@ -128,6 +132,6 @@ export const rejectDoctor = async (
         verificationNote: note,
       },
     },
-    { new: true }
+    { new: true },
   ).populate("userId", "name email");
 };

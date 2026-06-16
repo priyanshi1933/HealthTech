@@ -18,36 +18,18 @@ dotenv.config({ path: ".env.local" });
 const secret = process.env.JWT_SECRET as string;
 
 // ─── REGISTER ────────────────────────────────────────────────
-export const registerUser = async (
-  req: Request,
-  res: Response
-) => {
+export const registerUser = async (req: Request, res: Response) => {
   try {
-    const {
-      name,
-      email,
-      password,
-      role,
-    } = req.body;
+    const { name, email, password, role } = req.body;
 
-    if (
-      !name ||
-      !email ||
-      !password ||
-      !role
-    ) {
+    if (!name || !email || !password || !role) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
 
-    const user = await register(
-      name,
-      email,
-      password,
-      role
-    );
+    const user = await register(name, email, password, role);
 
     // Generate JWT immediately
     const authToken = jwt.sign(
@@ -58,22 +40,20 @@ export const registerUser = async (
       secret,
       {
         expiresIn: "1h",
-      }
+      },
     );
 
     // DOCTOR FLOW
     if (role === "doctor") {
-      const twoFactorData =
-        await generateTwoFactorSecret(
-          user._id.toString(),
-          email
-        );
+      const twoFactorData = await generateTwoFactorSecret(
+        user._id.toString(),
+        email,
+      );
 
       return res.status(201).json({
         success: true,
 
-        message:
-          "Doctor registered successfully. Scan QR and verify OTP.",
+        message: "Doctor registered successfully. Scan QR and verify OTP.",
 
         token: authToken,
 
@@ -85,10 +65,8 @@ export const registerUser = async (
         },
 
         twoFactor: {
-          qrCode:
-            twoFactorData.qrCode,
-          secret:
-            twoFactorData.secret,
+          qrCode: twoFactorData.qrCode,
+          secret: twoFactorData.secret,
         },
       });
     }
@@ -97,8 +75,7 @@ export const registerUser = async (
     return res.status(201).json({
       success: true,
 
-      message:
-        "User registered successfully",
+      message: "User registered successfully",
 
       token: authToken,
 
@@ -123,7 +100,9 @@ export const loginUser = async (req: Request, res: Response) => {
     const { email, password, totpToken } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email and password are required" });
     }
 
     const user = await login(email);
@@ -131,7 +110,13 @@ export const loginUser = async (req: Request, res: Response) => {
     // Step 1: Password check (all roles)
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ success: false, field: "password", message: "Password does not match" });
+      return res
+        .status(401)
+        .json({
+          success: false,
+          field: "password",
+          message: "Password does not match",
+        });
     }
 
     // Step 2: 2FA check (doctors only)
@@ -141,11 +126,15 @@ export const loginUser = async (req: Request, res: Response) => {
         return res.status(200).json({
           success: false,
           requiresTwoFactor: true,
-          message: "Password verified. Please provide your 6-digit authenticator code.",
+          message:
+            "Password verified. Please provide your 6-digit authenticator code.",
         });
       }
 
-      const isOtpValid = await verifyTwoFactorToken(user._id.toString(), totpToken);
+      const isOtpValid = await verifyTwoFactorToken(
+        user._id.toString(),
+        totpToken,
+      );
       if (!isOtpValid) {
         return res.status(401).json({
           success: false,
@@ -174,7 +163,9 @@ export const loginUser = async (req: Request, res: Response) => {
         name: user.name,
       });
   } catch (error: any) {
-    res.status(400).json({ success: false, field: "email", message: error.message });
+    res
+      .status(400)
+      .json({ success: false, field: "email", message: error.message });
   }
 };
 
@@ -185,15 +176,25 @@ export const verifyTwoFactor = async (req: Request, res: Response) => {
     const { token } = req.body;
 
     if (!token) {
-      return res.status(400).json({ success: false, message: "OTP token is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "OTP token is required" });
     }
 
     const isValid = await verifyAndEnableTwoFactor(userId, token);
     if (!isValid) {
-      return res.status(400).json({ success: false, message: "Invalid OTP. Make sure your authenticator app is synced." });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Invalid OTP. Make sure your authenticator app is synced.",
+        });
     }
 
-    res.json({ success: true, message: "2FA enabled successfully. You can now login with your OTP." });
+    res.json({
+      success: true,
+      message: "2FA enabled successfully. You can now login with your OTP.",
+    });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -204,7 +205,10 @@ export const getProfile = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
     const user = await getUserProfile(userId);
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     res.json({ success: true, data: user });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });

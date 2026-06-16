@@ -1,12 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 
-
 import nodemailer from "nodemailer";
 
 console.log("ETHEREAL_USER:", process.env.ETHEREAL_USER);
 
-// ✅ fixed transporter — same account every restart
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
@@ -17,7 +15,6 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// ✅ verify connection on startup
 transporter.verify((err, success) => {
   if (err) {
     console.error("❌ Email transporter error:", err);
@@ -27,8 +24,6 @@ transporter.verify((err, success) => {
     console.log("   Login with:", process.env.ETHEREAL_USER);
   }
 });
-
-// ── Templates ─────────────────────────────────────────────────
 
 const bookingConfirmationTemplate = (data: {
   patientName: string;
@@ -198,12 +193,10 @@ const reminderTemplate = (data: {
 </html>
 `;
 
-// ── Send functions ─────────────────────────────────────────────
-
 export const sendBookingConfirmation = async (
   to: string,
-  data: Parameters<typeof bookingConfirmationTemplate>[0]
-) => {
+  data: Parameters<typeof bookingConfirmationTemplate>[0],
+): Promise<string | null> => {
   try {
     const info = await transporter.sendMail({
       from: '"HealthCare Platform" <noreply@healthcare.com>',
@@ -211,19 +204,22 @@ export const sendBookingConfirmation = async (
       subject: "✅ Appointment Confirmed - HealthCare Platform",
       html: bookingConfirmationTemplate(data),
     });
+    const previewUrl = nodemailer.getTestMessageUrl(info) as string;
     console.log("─────────────────────────────────────");
     console.log("📧 Booking confirmation sent!");
-    console.log("🔗 Preview:", nodemailer.getTestMessageUrl(info));
+    console.log("🔗 Preview:", previewUrl);
     console.log("─────────────────────────────────────");
+    return previewUrl;
   } catch (err) {
     console.error("❌ Booking email failed:", err);
+    return null;
   }
 };
 
 export const sendCancellationEmail = async (
   to: string,
-  data: Parameters<typeof cancellationTemplate>[0]
-) => {
+  data: Parameters<typeof cancellationTemplate>[0],
+): Promise<string | null> => {
   try {
     const info = await transporter.sendMail({
       from: '"HealthCare Platform" <noreply@healthcare.com>',
@@ -231,19 +227,22 @@ export const sendCancellationEmail = async (
       subject: "❌ Appointment Cancelled - HealthCare Platform",
       html: cancellationTemplate(data),
     });
+    const previewUrl = nodemailer.getTestMessageUrl(info) as string;
     console.log("─────────────────────────────────────");
     console.log("📧 Cancellation email sent!");
-    console.log("🔗 Preview:", nodemailer.getTestMessageUrl(info));
+    console.log("🔗 Preview:", previewUrl);
     console.log("─────────────────────────────────────");
+    return previewUrl;
   } catch (err) {
     console.error("❌ Cancellation email failed:", err);
+    return null;
   }
 };
 
 export const sendReminderEmail = async (
   to: string,
-  data: Parameters<typeof reminderTemplate>[0]
-) => {
+  data: Parameters<typeof reminderTemplate>[0],
+): Promise<string | null> => {
   try {
     const info = await transporter.sendMail({
       from: '"HealthCare Platform" <noreply@healthcare.com>',
@@ -251,11 +250,14 @@ export const sendReminderEmail = async (
       subject: "⏰ Reminder: Appointment in 15 Minutes",
       html: reminderTemplate(data),
     });
+    const previewUrl = nodemailer.getTestMessageUrl(info) as string;
     console.log("─────────────────────────────────────");
     console.log("📧 Reminder email sent!");
-    console.log("🔗 Preview:", nodemailer.getTestMessageUrl(info));
+    console.log("🔗 Preview:", previewUrl);
     console.log("─────────────────────────────────────");
+    return previewUrl;
   } catch (err) {
     console.error("❌ Reminder email failed:", err);
+    return null;
   }
 };

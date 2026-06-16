@@ -39,9 +39,14 @@ export default function CreateDoctorProfile() {
 
   return (
     <div className="container py-5">
-      <div className="card profile-card p-5 mx-auto" style={{ maxWidth: "700px" }}>
+      <div
+        className="card profile-card p-5 mx-auto"
+        style={{ maxWidth: "700px" }}
+      >
         <h2 className="fw-bold mb-1">Create Doctor Profile</h2>
-        <p className="text-muted mb-4">Fill in your details. Admin will verify your profile.</p>
+        <p className="text-muted mb-4">
+          Fill in your details. Admin will verify your profile.
+        </p>
 
         {error && <div className="alert alert-danger">{error}</div>}
 
@@ -60,31 +65,41 @@ export default function CreateDoctorProfile() {
           <div className="mb-3">
             <label className="form-label fw-semibold">
               Qualifications
-              <span className="text-muted fw-normal ms-1">(comma separated)</span>
+              <span className="text-muted fw-normal ms-1">
+                (comma separated)
+              </span>
             </label>
             <input
               className="form-control"
               placeholder="e.g. MBBS, MD"
               value={form.qualifications}
-              onChange={(e) => setForm({ ...form, qualifications: e.target.value })}
+              onChange={(e) =>
+                setForm({ ...form, qualifications: e.target.value })
+              }
               required
             />
           </div>
 
           <div className="row">
             <div className="col-md-6 mb-3">
-              <label className="form-label fw-semibold">Experience (years)</label>
+              <label className="form-label fw-semibold">
+                Experience (years)
+              </label>
               <input
                 type="number"
                 className="form-control"
                 placeholder="e.g. 8"
                 value={form.experience}
-                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, experience: e.target.value })
+                }
                 required
               />
             </div>
             <div className="col-md-6 mb-3">
-              <label className="form-label fw-semibold">Consultation Fee (₹)</label>
+              <label className="form-label fw-semibold">
+                Consultation Fee (₹)
+              </label>
               <input
                 type="number"
                 className="form-control"
@@ -99,7 +114,9 @@ export default function CreateDoctorProfile() {
           <div className="mb-3">
             <label className="form-label fw-semibold">
               Languages
-              <span className="text-muted fw-normal ms-1">(comma separated)</span>
+              <span className="text-muted fw-normal ms-1">
+                (comma separated)
+              </span>
             </label>
             <input
               className="form-control"

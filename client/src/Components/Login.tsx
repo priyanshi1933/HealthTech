@@ -29,7 +29,7 @@ export default function Login() {
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("role", res.data.role);
-      localStorage.setItem("name", res.data.name); 
+      localStorage.setItem("name", res.data.name);
 
       const role = res.data.role;
       if (role === "admin") {
@@ -39,7 +39,6 @@ export default function Login() {
       } else {
         navigate("/doctors");
       }
-
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");
     } finally {
@@ -52,13 +51,10 @@ export default function Login() {
       <div className="container">
         <div className="card auth-card mx-auto" style={{ maxWidth: "500px" }}>
           <div className="right-panel">
-
             <h2 className="fw-bold text-center mb-1">Welcome Back</h2>
             <p className="text-center text-muted mb-4">Login to continue</p>
 
-            {error && (
-              <div className="alert alert-danger py-2">{error}</div>
-            )}
+            {error && <div className="alert alert-danger py-2">{error}</div>}
 
             <input
               className="form-control mb-3"
@@ -99,8 +95,8 @@ export default function Login() {
               {loading
                 ? "Please wait..."
                 : showOtp
-                ? "Verify & Login"
-                : "Login"}
+                  ? "Verify & Login"
+                  : "Login"}
             </button>
 
             <div className="text-center mt-4">
@@ -111,7 +107,6 @@ export default function Login() {
                 </Link>
               </p>
             </div>
-
           </div>
         </div>
       </div>

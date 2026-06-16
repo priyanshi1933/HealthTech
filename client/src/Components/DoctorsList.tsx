@@ -20,21 +20,26 @@ export default function DoctorsList() {
     }
   };
 
-  useEffect(() => { fetchDoctors(); }, []);
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
 
   return (
     <div style={{ minHeight: "100vh", background: "#f4f7fb", padding: "2rem" }}>
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
-
         {/* Header */}
-        <div style={{
-          background: "linear-gradient(135deg,#2563eb,#06b6d4)",
-          borderRadius: "20px",
-          padding: "2.5rem",
-          color: "white",
-          marginBottom: "2rem",
-        }}>
-          <h2 style={{ fontWeight: 800, marginBottom: "0.5rem" }}>Find a Doctor</h2>
+        <div
+          style={{
+            background: "linear-gradient(135deg,#2563eb,#06b6d4)",
+            borderRadius: "20px",
+            padding: "2.5rem",
+            color: "white",
+            marginBottom: "2rem",
+          }}
+        >
+          <h2 style={{ fontWeight: 800, marginBottom: "0.5rem" }}>
+            Find a Doctor
+          </h2>
           <p style={{ opacity: 0.85, marginBottom: "1.5rem" }}>
             Browse from our verified healthcare professionals
           </p>
@@ -69,7 +74,10 @@ export default function DoctorsList() {
             </button>
             {specialty && (
               <button
-                onClick={() => { setSpecialty(""); fetchDoctors(); }}
+                onClick={() => {
+                  setSpecialty("");
+                  fetchDoctors();
+                }}
                 style={{
                   padding: "12px 18px",
                   borderRadius: "12px",
@@ -91,12 +99,14 @@ export default function DoctorsList() {
             <div className="spinner-border text-primary" />
           </div>
         ) : doctors.length === 0 ? (
-          <div style={{
-            textAlign: "center",
-            padding: "4rem",
-            background: "white",
-            borderRadius: "16px",
-          }}>
+          <div
+            style={{
+              textAlign: "center",
+              padding: "4rem",
+              background: "white",
+              borderRadius: "16px",
+            }}
+          >
             <div style={{ fontSize: "3rem" }}>🔍</div>
             <h5 style={{ color: "#64748b" }}>No doctors found</h5>
           </div>
@@ -104,83 +114,135 @@ export default function DoctorsList() {
           <div className="row g-4">
             {doctors.map((doc) => (
               <div key={doc._id} className="col-md-6 col-lg-4">
-                <div style={{
-                  background: "white",
-                  borderRadius: "18px",
-                  padding: "1.5rem",
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
+                <div
+                  style={{
+                    background: "white",
+                    borderRadius: "18px",
+                    padding: "1.5rem",
+                    boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    transition: "transform 0.2s, box-shadow 0.2s",
                   }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
-                    (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)";
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.transform =
+                      "translateY(-4px)";
+                    (e.currentTarget as HTMLDivElement).style.boxShadow =
+                      "0 8px 24px rgba(0,0,0,0.12)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLDivElement).style.transform =
+                      "translateY(0)";
+                    (e.currentTarget as HTMLDivElement).style.boxShadow =
+                      "0 2px 12px rgba(0,0,0,0.06)";
                   }}
                 >
                   {/* Top */}
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "1rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "12px",
+                      marginBottom: "1rem",
+                    }}
+                  >
                     <img
                       src={`https://ui-avatars.com/api/?name=${doc.userId?.name}&background=2563eb&color=fff&size=55`}
                       style={{ borderRadius: "50%", width: 55, height: 55 }}
                     />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, color: "#1e293b" }}>{doc.userId?.name}</div>
-                      <div style={{ color: "#2563eb", fontSize: "0.85rem", fontWeight: 600 }}>{doc.specialty}</div>
+                      <div style={{ fontWeight: 700, color: "#1e293b" }}>
+                        {doc.userId?.name}
+                      </div>
+                      <div
+                        style={{
+                          color: "#2563eb",
+                          fontSize: "0.85rem",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {doc.specialty}
+                      </div>
                     </div>
                     {doc.verifiedBadge && (
-                      <span style={{
-                        background: "#d1fae5",
-                        color: "#065f46",
-                        fontSize: "0.7rem",
-                        padding: "3px 8px",
-                        borderRadius: "20px",
-                        fontWeight: 600,
-                      }}>✅ Verified</span>
+                      <span
+                        style={{
+                          background: "#d1fae5",
+                          color: "#065f46",
+                          fontSize: "0.7rem",
+                          padding: "3px 8px",
+                          borderRadius: "20px",
+                          fontWeight: 600,
+                        }}
+                      >
+                        ✅ Verified
+                      </span>
                     )}
                   </div>
 
                   {/* Qualifications */}
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "1rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "6px",
+                      marginBottom: "1rem",
+                    }}
+                  >
                     {doc.qualifications.map((q: string) => (
-                      <span key={q} style={{
-                        background: "#eff6ff",
-                        color: "#2563eb",
-                        fontSize: "0.75rem",
-                        padding: "3px 10px",
-                        borderRadius: "20px",
-                        fontWeight: 600,
-                      }}>{q}</span>
+                      <span
+                        key={q}
+                        style={{
+                          background: "#eff6ff",
+                          color: "#2563eb",
+                          fontSize: "0.75rem",
+                          padding: "3px 10px",
+                          borderRadius: "20px",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {q}
+                      </span>
                     ))}
                   </div>
 
                   {/* Stats */}
-                  <div style={{
-                    display: "flex",
-                    justifyContent: "space-around",
-                    background: "#f8fafc",
-                    borderRadius: "12px",
-                    padding: "0.75rem",
-                    marginBottom: "1rem",
-                  }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-around",
+                      background: "#f8fafc",
+                      borderRadius: "12px",
+                      padding: "0.75rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontWeight: 800, color: "#2563eb" }}>{doc.experience}yr</div>
-                      <div style={{ color: "#64748b", fontSize: "0.75rem" }}>Experience</div>
+                      <div style={{ fontWeight: 800, color: "#2563eb" }}>
+                        {doc.experience}yr
+                      </div>
+                      <div style={{ color: "#64748b", fontSize: "0.75rem" }}>
+                        Experience
+                      </div>
                     </div>
                     <div style={{ width: "1px", background: "#e2e8f0" }} />
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontWeight: 800, color: "#2563eb" }}>₹{doc.fee}</div>
-                      <div style={{ color: "#64748b", fontSize: "0.75rem" }}>Fee</div>
+                      <div style={{ fontWeight: 800, color: "#2563eb" }}>
+                        ₹{doc.fee}
+                      </div>
+                      <div style={{ color: "#64748b", fontSize: "0.75rem" }}>
+                        Fee
+                      </div>
                     </div>
                     <div style={{ width: "1px", background: "#e2e8f0" }} />
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontWeight: 800, color: "#2563eb" }}>{doc.languages.length}</div>
-                      <div style={{ color: "#64748b", fontSize: "0.75rem" }}>Languages</div>
+                      <div style={{ fontWeight: 800, color: "#2563eb" }}>
+                        {doc.languages.length}
+                      </div>
+                      <div style={{ color: "#64748b", fontSize: "0.75rem" }}>
+                        Languages
+                      </div>
                     </div>
                   </div>
 

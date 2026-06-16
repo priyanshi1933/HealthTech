@@ -15,12 +15,14 @@ import {
 export const createProfile = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    const { specialty, qualifications, experience, fee, languages, bio } = req.body;
+    const { specialty, qualifications, experience, fee, languages, bio } =
+      req.body;
 
     if (!specialty || !qualifications || !experience || !fee || !languages) {
       return res.status(400).json({
         success: false,
-        message: "specialty, qualifications, experience, fee, languages are required",
+        message:
+          "specialty, qualifications, experience, fee, languages are required",
       });
     }
 

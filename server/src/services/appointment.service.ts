@@ -2,7 +2,10 @@ import { AppointmentModel } from "../models/appointment.model";
 import { DoctorModel } from "../models/doctor.model";
 import { AvailabilityModel } from "../models/availability.model";
 import { DateTime } from "luxon";
-import { sendBookingConfirmation, sendCancellationEmail } from "./email.service";
+import {
+  sendBookingConfirmation,
+  sendCancellationEmail,
+} from "./email.service";
 import { UserModel } from "../models/user.model";
 
 export const bookAppointment = async (
@@ -11,16 +14,17 @@ export const bookAppointment = async (
     doctorId: string;
     slotTimeUTC: string;
     patientTimezone: string;
-  }
-) => {
-  const doctor = await DoctorModel.findById(data.doctorId)
-    .populate("userId", "name email");
+  },
+): Promise<{ appointment: any; emailPreviewUrl: string | null }> => {
+  const doctor = await DoctorModel.findById(data.doctorId).populate(
+    "userId",
+    "name email",
+  );
   if (!doctor) throw new Error("Doctor not found");
   if (doctor.verificationStatus !== "approved") {
     throw new Error("Doctor is not verified");
   }
 
-  // ✅ get patient details for email
   const patient = await UserModel.findById(patientId);
   if (!patient) throw new Error("Patient not found");
 
@@ -46,7 +50,9 @@ export const bookAppointment = async (
   if (existing) throw new Error("Slot already booked. Please choose another.");
 
   const paymentId = `PAY_${Date.now()}_${Math.random()
-    .toString(36).substr(2, 9).toUpperCase()}`;
+    .toString(36)
+    .substr(2, 9)
+    .toUpperCase()}`;
 
   const appointment = await AppointmentModel.create({
     patientId,
@@ -62,12 +68,14 @@ export const bookAppointment = async (
     paymentId,
   });
 
-  // ✅ send confirmation email
-  const doctorUser = doctor.userId as any;
-  const slotInPatientTz = DateTime.fromJSDate(slotTime)
-    .setZone(data.patientTimezone);
+  const appointmentObj = appointment.toObject();
 
-  sendBookingConfirmation(patient.email, {
+  const doctorUser = doctor.userId as any;
+  const slotInPatientTz = DateTime.fromJSDate(slotTime).setZone(
+    data.patientTimezone,
+  );
+
+  const emailPreviewUrl = await sendBookingConfirmation(patient.email, {
     patientName: patient.name,
     doctorName: doctorUser?.name || "Doctor",
     specialty: doctor.specialty,
@@ -79,7 +87,7 @@ export const bookAppointment = async (
     paymentId,
   });
 
-  return appointment;
+  return { appointment: appointmentObj, emailPreviewUrl };
 };
 
 export const getPatientAppointments = async (patientId: string) => {
@@ -104,26 +112,30 @@ export const cancelAppointment = async (
   appointmentId: string,
   userId: string,
   role: string,
-  reason?: string
-) => {
-  const appointment = await AppointmentModel.findById(appointmentId)
+  reason?: string,
+): Promise<{ appointment: any; emailPreviewUrl: string | null }> => {
+  const existingAppointment = await AppointmentModel.findById(appointmentId)
     .populate("patientId", "name email")
     .populate({
       path: "doctorId",
       populate: { path: "userId", select: "name" },
     });
 
-  if (!appointment) throw new Error("Appointment not found");
-  if (appointment.status === "cancelled") throw new Error("Already cancelled");
-  if (appointment.status === "completed") throw new Error("Cannot cancel completed");
+  if (!existingAppointment) throw new Error("Appointment not found");
+  if (existingAppointment.status === "cancelled")
+    throw new Error("Already cancelled");
+  if (existingAppointment.status === "completed")
+    throw new Error("Cannot cancel completed");
 
   if (role === "patient") {
-    if (appointment.patientId._id.toString() !== userId) {
+    if (existingAppointment.patientId._id.toString() !== userId) {
       throw new Error("Not authorized");
     }
   } else if (role === "doctor") {
     const doctor = await DoctorModel.findOne({ userId });
-    if (doctor?._id.toString() !== appointment.doctorId._id.toString()) {
+    if (
+      doctor?._id.toString() !== existingAppointment.doctorId._id.toString()
+    ) {
       throw new Error("Not authorized");
     }
   } else if (role !== "admin") {
@@ -139,31 +151,32 @@ export const cancelAppointment = async (
       cancellationReason: reason || "No reason provided",
       cancelledAt: new Date(),
     },
-    { new: true }
+    { new: true },
   );
 
-  // ✅ send cancellation email
-  const patient = appointment.patientId as any;
-  const doctor = appointment.doctorId as any;
-  const slotInPatientTz = DateTime.fromJSDate(appointment.slotTime)
-    .setZone(appointment.patientTimezone);
+  const patient = existingAppointment.patientId as any;
+  const doctor = existingAppointment.doctorId as any;
 
-  sendCancellationEmail(patient.email, {
+  const slotInPatientTz = DateTime.fromJSDate(
+    existingAppointment.slotTime,
+  ).setZone(existingAppointment.patientTimezone);
+
+  const emailPreviewUrl = await sendCancellationEmail(patient.email, {
     patientName: patient.name,
     doctorName: doctor?.userId?.name || "Doctor",
     date: slotInPatientTz.toFormat("dd MMM yyyy"),
     time: slotInPatientTz.toFormat("HH:mm"),
-    fee: appointment.fee,
+    fee: existingAppointment.fee,
     cancelledBy: role,
     reason: reason || "No reason provided",
   });
 
-  return updated;
+  return { appointment: updated, emailPreviewUrl };
 };
 
 export const completeAppointment = async (
   appointmentId: string,
-  userId: string
+  userId: string,
 ) => {
   const doctor = await DoctorModel.findOne({ userId });
   if (!doctor) throw new Error("Doctor not found");
@@ -180,14 +193,14 @@ export const completeAppointment = async (
   return await AppointmentModel.findByIdAndUpdate(
     appointmentId,
     { status: "completed" },
-    { new: true }
+    { new: true },
   );
 };
 
 export const getAppointmentById = async (
   appointmentId: string,
   userId: string,
-  role: string
+  role: string,
 ) => {
   const appointment = await AppointmentModel.findById(appointmentId)
     .populate("patientId", "name email")
@@ -200,7 +213,8 @@ export const getAppointmentById = async (
 
   const doctor = await DoctorModel.findOne({ userId });
   const isPatient = appointment.patientId._id.toString() === userId;
-  const isDoctor = doctor?._id.toString() === appointment.doctorId._id.toString();
+  const isDoctor =
+    doctor?._id.toString() === appointment.doctorId._id.toString();
   const isAdmin = role === "admin";
 
   if (!isPatient && !isDoctor && !isAdmin) {

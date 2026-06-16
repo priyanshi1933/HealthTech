@@ -7,7 +7,7 @@ export interface IAvailability extends Document {
   startTime?: string;
   endTime?: string;
   slotDuration?: number;
-  timezone?: string;          
+  timezone?: string;
   blockDate?: Date;
   blockReason?: string;
   isActive: boolean;
@@ -29,15 +29,15 @@ const AvailabilitySchema: Schema<IAvailability> = new Schema<IAvailability>(
     startTime: { type: String, default: null },
     endTime: { type: String, default: null },
     slotDuration: { type: Number, default: 30 },
-    timezone: { type: String, default: "Asia/Kolkata" }, 
+    timezone: { type: String, default: "Asia/Kolkata" },
     blockDate: { type: Date, default: null },
     blockReason: { type: String, default: null },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const AvailabilityModel = mongoose.model<IAvailability>(
   "Availability",
-  AvailabilitySchema
+  AvailabilitySchema,
 );

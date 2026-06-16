@@ -5,7 +5,7 @@ import { UserModel } from "../models/user.model";
 // Called during doctor registration — generates secret + QR
 export const generateTwoFactorSecret = async (
   userId: string,
-  email: string
+  email: string,
 ) => {
   const secret = speakeasy.generateSecret({
     name: `HealthPlatform (${email})`,
@@ -22,29 +22,20 @@ export const generateTwoFactorSecret = async (
 
   return {
     secret: secret.base32, // backup key shown to doctor
-    qrCode,                // base64 PNG → render as <img src={qrCode} />
+    qrCode, // base64 PNG → render as <img src={qrCode} />
   };
 };
 
 // Doctor scans QR then submits first OTP to confirm setup
 export const verifyAndEnableTwoFactor = async (
   userId: string,
-  token: string
+  token: string,
 ): Promise<boolean> => {
-  console.log(
-  "USER ID:",
-  userId
-);
+  console.log("USER ID:", userId);
 
-const user =
-  await UserModel.findById(
-    userId
-  );
+  const user = await UserModel.findById(userId);
 
-console.log(
-  "USER:",
-  user
-);
+  console.log("USER:", user);
   if (!user?.twoFactorSecret) throw new Error("2FA not initialized");
 
   const isValid = speakeasy.totp.verify({
@@ -67,7 +58,7 @@ console.log(
 // Called on every doctor login to validate OTP
 export const verifyTwoFactorToken = async (
   userId: string,
-  token: string
+  token: string,
 ): Promise<boolean> => {
   const user = await UserModel.findById(userId);
   if (!user?.twoFactorSecret) throw new Error("2FA not set up");

@@ -74,7 +74,7 @@ export default function Availability() {
     startTime: "09:00",
     endTime: "17:00",
     slotDuration: "30",
-    timezone: "Asia/Kolkata", 
+    timezone: "Asia/Kolkata",
   });
 
   const [blockForm, setBlockForm] = useState({
@@ -129,20 +129,24 @@ export default function Availability() {
     }
   };
 
- const addBlock = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setSaving(true);
-  try {
-    await api.post("/availability/block", blockForm);
-    showMsg("Date blocked!");
-    setBlockForm({ blockDate: "", blockReason: "", timezone: blockForm.timezone });
-    fetchAvailability();
-  } catch (err: any) {
-    showMsg(err.response?.data?.message || "Failed", true);
-  } finally {
-    setSaving(false);
-  }
-};
+  const addBlock = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await api.post("/availability/block", blockForm);
+      showMsg("Date blocked!");
+      setBlockForm({
+        blockDate: "",
+        blockReason: "",
+        timezone: blockForm.timezone,
+      });
+      fetchAvailability();
+    } catch (err: any) {
+      showMsg(err.response?.data?.message || "Failed", true);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const deleteRecurring = async (id: string) => {
     try {

@@ -3,7 +3,15 @@ import { AppointmentModel } from "../models/appointment.model";
 import { DoctorModel } from "../models/doctor.model";
 import { DateTime, Info } from "luxon";
 
-const DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+const DAYS = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 
 const getDoctorId = async (userId: string) => {
   const doctor = await DoctorModel.findOne({ userId });
@@ -22,7 +30,7 @@ export const addRecurringSlot = async (
     endTime: string;
     slotDuration: number;
     timezone: string;
-  }
+  },
 ) => {
   const doctorId = await getDoctorId(userId);
 
@@ -42,7 +50,8 @@ export const addRecurringSlot = async (
     endTime: data.endTime,
     isActive: true,
   });
-  if (existing) throw new Error(`Slot already exists for ${DAYS[data.dayOfWeek]}`);
+  if (existing)
+    throw new Error(`Slot already exists for ${DAYS[data.dayOfWeek]}`);
 
   return await AvailabilityModel.create({
     doctorId,
@@ -51,7 +60,7 @@ export const addRecurringSlot = async (
     startTime: data.startTime,
     endTime: data.endTime,
     slotDuration: data.slotDuration,
-    timezone: data.timezone,  
+    timezone: data.timezone,
   });
 };
 
@@ -61,7 +70,7 @@ export const addBlockDate = async (
     blockDate: string;
     blockReason?: string;
     timezone: string;
-  }
+  },
 ) => {
   const doctorId = await getDoctorId(userId);
 
@@ -88,7 +97,7 @@ export const addBlockDate = async (
     type: "block",
     blockDate: blockDateUTC,
     blockReason: data.blockReason || "Unavailable",
-    timezone: data.timezone, 
+    timezone: data.timezone,
   });
 };
 
@@ -134,7 +143,7 @@ export const deleteBlockDate = async (userId: string, blockId: string) => {
 export const generateSlots = async (
   doctorId: string,
   date: string,
-  patientTimezone: string = "Asia/Kolkata"
+  patientTimezone: string = "Asia/Kolkata",
 ) => {
   if (!Info.isValidIANAZone(patientTimezone)) {
     throw new Error("Invalid patient timezone");
@@ -152,7 +161,12 @@ export const generateSlots = async (
 
   const todayInDoctorTz = DateTime.now().setZone(doctorTimezone).startOf("day");
   if (doctorDate.startOf("day") < todayInDoctorTz) {
-    return { date, blocked: false, slots: [], message: "Cannot book past dates" };
+    return {
+      date,
+      blocked: false,
+      slots: [],
+      message: "Cannot book past dates",
+    };
   }
 
   const luxonWeekday = doctorDate.weekday;
@@ -204,14 +218,14 @@ export const generateSlots = async (
   });
 
   const bookedUTCTimes = new Set(
-    bookedAppointments.map((a) => a.slotTime.toISOString())
+    bookedAppointments.map((a) => a.slotTime.toISOString()),
   );
 
   const slots: {
-    time: string;         
-    timeDoctor: string;   
-    timeUTC: string;     
-    available: boolean;   
+    time: string;
+    timeDoctor: string;
+    timeUTC: string;
+    available: boolean;
     duration: number;
   }[] = [];
 
@@ -248,7 +262,7 @@ export const generateSlots = async (
   }
 
   const unique = slots.filter(
-    (s, i, arr) => arr.findIndex((x) => x.timeUTC === s.timeUTC) === i
+    (s, i, arr) => arr.findIndex((x) => x.timeUTC === s.timeUTC) === i,
   );
 
   return {

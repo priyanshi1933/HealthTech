@@ -13,7 +13,7 @@ POST http://localhost:3000/login
 content-type: application/json
 
 {
-    "email": "nishtha@gmail.com",
+    "email": "ami@gmail.com",
     "password": "12345678"
 }
 
@@ -23,9 +23,9 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "email": "yusuf@gmail.com",
-  "password": "Yusuf@12345",
-  "totpToken": "347863"
+  "email": "rajan@gmail.com",
+  "password": "Rajan@12345",
+  "totpToken": "021705"
 }
 
 ###
@@ -298,3 +298,47 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1M
 
 ### Check slots — booked slot shows available:false
 GET http://localhost:3000/slots?doctorId=DOCTOR_ID&date=2026-06-23&timezone=Asia/Kolkata
+
+### Write Prescription (doctor — appointment must be completed first)
+POST http://localhost:3000/prescriptions/write
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJlMzA3M2Q2YjJlY2VmMTkwYTRkOCIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE2MDM3MTIsImV4cCI6MTc4MTYwNzMxMn0.7jKtjCq0Y3YNiAQJ3LURXcL58enlFvdT7CF2iuSJbY0
+
+{
+  "appointmentId": "6a2f94dabdfe4f3c119fc3c2",
+  "diagnosis": "Hypertension Stage 1",
+  "medicines": [
+    {
+      "name": "Amlodipine",
+      "dosage": "5mg",
+      "frequency": "Once daily",
+      "duration": "30 days",
+      "notes": "Take in the morning"
+    },
+    {
+      "name": "Aspirin",
+      "dosage": "75mg",
+      "frequency": "Once daily",
+      "duration": "30 days",
+      "notes": "Take after food"
+    }
+  ],
+  "instructions": "Avoid salt. Exercise 30 min daily. Monitor BP weekly.",
+  "followUpDate": "2026-07-16"
+}
+
+### Get Prescription by Appointment
+GET http://localhost:3000/prescriptions/6a30dcc8ea79d457bd9e7762
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmY5NDMzYmRmZTRmM2MxMTlmYzNjMCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNjAzNDMwLCJleHAiOjE3ODE2MDcwMzB9.oQi7bt-nABsTcJvk5opoqTmoBK0tAqmr48h4bBVUiCE
+
+### Patient: My Prescriptions
+GET http://localhost:3000/prescriptions/my
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmY5NDMzYmRmZTRmM2MxMTlmYzNjMCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNjAzNDMwLCJleHAiOjE3ODE2MDcwMzB9.oQi7bt-nABsTcJvk5opoqTmoBK0tAqmr48h4bBVUiCE
+
+### Doctor: My Prescriptions
+GET http://localhost:3000/prescriptions/doctor
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE2MDMwMDQsImV4cCI6MTc4MTYwNjYwNH0.VNVXamr510-UR_1MxnoDEnozi3bxclzUefuQizlaIv8
+
+### Download PDF
+GET http://localhost:3000/prescriptions/6a30dcc8ea79d457bd9e7762/download
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmY5NDMzYmRmZTRmM2MxMTlmYzNjMCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNjAzNDMwLCJleHAiOjE3ODE2MDcwMzB9.oQi7bt-nABsTcJvk5opoqTmoBK0tAqmr48h4bBVUiCE

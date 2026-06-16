@@ -21,18 +21,19 @@ export default function Profile() {
     fetchProfile();
   }, []);
 
-
-
-  if (loading) return (
-    <div className="d-flex justify-content-center align-items-center min-vh-100">
-      <div className="spinner-border text-primary" />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="d-flex justify-content-center align-items-center min-vh-100">
+        <div className="spinner-border text-primary" />
+      </div>
+    );
 
   return (
     <div className="container py-5">
-      <div className="card profile-card p-5 mx-auto" style={{ maxWidth: "700px" }}>
-
+      <div
+        className="card profile-card p-5 mx-auto"
+        style={{ maxWidth: "700px" }}
+      >
         <div className="text-center mb-4">
           <img
             src={`https://ui-avatars.com/api/?name=${user.name}&size=100&background=2563eb&color=fff`}
@@ -41,7 +42,9 @@ export default function Profile() {
             height={100}
           />
           <h2 className="fw-bold">{user.name}</h2>
-          <span className={`badge ${user.role === "doctor" ? "bg-success" : user.role === "admin" ? "bg-danger" : "bg-primary"}`}>
+          <span
+            className={`badge ${user.role === "doctor" ? "bg-success" : user.role === "admin" ? "bg-danger" : "bg-primary"}`}
+          >
             {user.role}
           </span>
         </div>
@@ -70,9 +73,6 @@ export default function Profile() {
             )}
           </div>
         </div>
-
-       
-
       </div>
     </div>
   );

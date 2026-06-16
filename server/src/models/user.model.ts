@@ -4,7 +4,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
-  role?:string;
+  role?: string;
   twoFactorSecret?: string;
   twoFactorEnabled?: boolean;
   twoFactorVerified?: boolean;
@@ -25,7 +25,7 @@ const UserSchema: Schema<IUser> = new Schema<IUser>(
     twoFactorEnabled: { type: Boolean, default: false },
     twoFactorVerified: { type: Boolean, default: false },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const UserModel = mongoose.model<IUser>("User", UserSchema);

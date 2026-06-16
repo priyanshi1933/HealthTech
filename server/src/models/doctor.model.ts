@@ -45,7 +45,7 @@ const DoctorSchema: Schema<IDoctor> = new Schema<IDoctor>(
     verifiedAt: { type: Date, default: null },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const DoctorModel = mongoose.model<IDoctor>("Doctor", DoctorSchema);

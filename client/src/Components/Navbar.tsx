@@ -39,7 +39,8 @@ export default function Navbar() {
         {role === "patient" && (
           <>
             <NavLink to="/doctors">Find Doctors</NavLink>
-             <NavLink to="/appointments">My Appointments</NavLink>  
+            <NavLink to="/appointments">My Appointments</NavLink>
+            <NavLink to="/prescriptions/my">My Prescriptions</NavLink> 
             <NavLink to="/profile">Profile</NavLink>
           </>
         )}
@@ -48,7 +49,8 @@ export default function Navbar() {
           <>
             <NavLink to="/doctor/profile">My Profile</NavLink>
             <NavLink to="/doctor/availability">Availability</NavLink>
-            <NavLink to="/appointments/doctor">Appointments</NavLink> 
+            <NavLink to="/appointments/doctor">Appointments</NavLink>
+            <NavLink to="/prescriptions/doctor">Prescriptions</NavLink>
             <NavLink to="/doctors">Doctors</NavLink>
           </>
         )}

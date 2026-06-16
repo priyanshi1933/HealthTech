@@ -20,7 +20,7 @@ export const book = async (req: Request, res: Response) => {
       });
     }
 
-    const appointment = await bookAppointment(patientId, {
+    const { appointment, emailPreviewUrl } = await bookAppointment(patientId, {
       doctorId,
       slotTimeUTC,
       patientTimezone: patientTimezone || "Asia/Kolkata",
@@ -30,8 +30,15 @@ export const book = async (req: Request, res: Response) => {
       success: true,
       message: "Appointment booked successfully",
       data: appointment,
+      emailPreviewUrl,
     });
   } catch (error: any) {
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: "Slot already booked. Please choose another.",
+      });
+    }
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -62,14 +69,19 @@ export const cancel = async (req: Request, res: Response) => {
     const role = (req as any).user.role;
     const { reason } = req.body;
 
-    const appointment = await cancelAppointment(
+    const { appointment, emailPreviewUrl } = await cancelAppointment(
       String(req.params.id),
       userId,
       role,
-      reason
+      reason,
     );
 
-    res.json({ success: true, message: "Appointment cancelled", data: appointment });
+    res.json({
+      success: true,
+      message: "Appointment cancelled",
+      data: appointment,
+      emailPreviewUrl,
+    });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -78,13 +90,19 @@ export const cancel = async (req: Request, res: Response) => {
 export const complete = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
-    const appointment = await completeAppointment(String(req.params.id), userId);
-    res.json({ success: true, message: "Appointment completed", data: appointment });
+    const appointment = await completeAppointment(
+      String(req.params.id),
+      userId,
+    );
+    res.json({
+      success: true,
+      message: "Appointment completed",
+      data: appointment,
+    });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 
 export const singleAppointment = async (req: Request, res: Response) => {
   try {
@@ -93,7 +111,7 @@ export const singleAppointment = async (req: Request, res: Response) => {
     const appointment = await getAppointmentById(
       String(req.params.id),
       userId,
-      role
+      role,
     );
     res.json({ success: true, data: appointment });
   } catch (error: any) {

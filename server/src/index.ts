@@ -39,6 +39,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use(router);
+app.use("/uploads",express.static(path.join(process.cwd(),"uploads")));
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

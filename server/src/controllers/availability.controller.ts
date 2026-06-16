@@ -26,10 +26,12 @@ export const addRecurring = async (req: Request, res: Response) => {
       startTime,
       endTime,
       slotDuration: Number(slotDuration) || 30,
-      timezone: timezone || "Asia/Kolkata", 
+      timezone: timezone || "Asia/Kolkata",
     });
 
-    res.status(201).json({ success: true, message: "Recurring slot added", data: slot });
+    res
+      .status(201)
+      .json({ success: true, message: "Recurring slot added", data: slot });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
@@ -41,21 +43,24 @@ export const addBlock = async (req: Request, res: Response) => {
     const { blockDate, blockReason, timezone } = req.body;
 
     if (!blockDate) {
-      return res.status(400).json({ success: false, message: "blockDate is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "blockDate is required" });
     }
 
     const block = await addBlockDate(userId, {
       blockDate,
       blockReason,
-      timezone: timezone || "Asia/Kolkata", 
+      timezone: timezone || "Asia/Kolkata",
     });
 
-    res.status(201).json({ success: true, message: "Date blocked", data: block });
+    res
+      .status(201)
+      .json({ success: true, message: "Date blocked", data: block });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
-
 
 export const getMyAvailabilityHandler = async (req: Request, res: Response) => {
   try {
@@ -67,7 +72,10 @@ export const getMyAvailabilityHandler = async (req: Request, res: Response) => {
   }
 };
 
-export const getDoctorAvailabilityHandler = async (req: Request, res: Response) => {
+export const getDoctorAvailabilityHandler = async (
+  req: Request,
+  res: Response,
+) => {
   try {
     const data = await getDoctorAvailability(String(req.params.doctorId));
     res.json({ success: true, data });
@@ -110,7 +118,7 @@ export const getSlotsForDate = async (req: Request, res: Response) => {
     const result = await generateSlots(
       String(doctorId),
       String(date),
-      String(timezone || "Asia/Kolkata") 
+      String(timezone || "Asia/Kolkata"),
     );
 
     res.json({ success: true, data: result });

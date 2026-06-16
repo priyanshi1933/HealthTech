@@ -20,45 +20,28 @@ export default function Register() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(
-        "http://localhost:3000/register",
-        form
-      );
+      const res = await axios.post("http://localhost:3000/register", form);
 
       console.log(res.data);
 
-      localStorage.setItem(
-        "token",
-        res.data.token
-      );
+      localStorage.setItem("token", res.data.token);
 
-      if (
-        form.role === "doctor" &&
-        res.data.twoFactor
-      ) {
-        setQrCode(
-          res.data.twoFactor.qrCode
-        );
+      if (form.role === "doctor" && res.data.twoFactor) {
+        setQrCode(res.data.twoFactor.qrCode);
 
         setIsDoctor(true);
 
-        alert(
-          "Doctor registered successfully. Please scan the QR code."
-        );
+        alert("Doctor registered successfully. Please scan the QR code.");
 
         return;
       }
 
       alert("Registration Successful");
       navigate("/");
-
     } catch (err: any) {
       console.log(err.response?.data);
 
-      alert(
-        err.response?.data?.message ||
-        "Registration failed"
-      );
+      alert(err.response?.data?.message || "Registration failed");
     }
   };
 
@@ -74,40 +57,29 @@ export default function Register() {
           }}
         >
           <div className="row g-0">
-
             {/* Left Side */}
             <div
               className="col-md-5 text-white d-flex flex-column justify-content-center align-items-center p-5"
               style={{
-                background:
-                  "linear-gradient(135deg,#0d6efd,#20c997)",
+                background: "linear-gradient(135deg,#0d6efd,#20c997)",
               }}
             >
               <FaUserMd size={120} />
 
-              <h1 className="fw-bold mt-4">
-                Telemedicine
-              </h1>
+              <h1 className="fw-bold mt-4">Telemedicine</h1>
 
               <p className="text-center mt-3">
-                Secure healthcare platform
-                for doctors and patients.
+                Secure healthcare platform for doctors and patients.
               </p>
             </div>
 
             {/* Right Side */}
             <div className="col-md-7 p-5">
+              <h2 className="fw-bold mb-2">Create Account</h2>
 
-              <h2 className="fw-bold mb-2">
-                Create Account
-              </h2>
-
-              <p className="text-muted mb-4">
-                Register to continue
-              </p>
+              <p className="text-muted mb-4">Register to continue</p>
 
               <form onSubmit={submit}>
-
                 <input
                   type="text"
                   className="form-control mb-3"
@@ -157,13 +129,9 @@ export default function Register() {
                     })
                   }
                 >
-                  <option value="patient">
-                    Patient
-                  </option>
+                  <option value="patient">Patient</option>
 
-                  <option value="doctor">
-                    Doctor
-                  </option>
+                  <option value="doctor">Doctor</option>
                 </select>
 
                 <button
@@ -172,18 +140,13 @@ export default function Register() {
                 >
                   Register
                 </button>
-
               </form>
 
               {/* Login Link */}
               <div className="text-center mt-4">
                 <p className="mb-0">
                   Already have an account?
-
-                  <Link
-                    to="/"
-                    className="ms-2 text-decoration-none fw-bold"
-                  >
+                  <Link to="/" className="ms-2 text-decoration-none fw-bold">
                     Login
                   </Link>
                 </p>
@@ -192,14 +155,10 @@ export default function Register() {
               {/* QR Code Section */}
               {qrCode && isDoctor && (
                 <div className="mt-5 text-center">
-
-                  <h4 className="fw-bold">
-                    Scan QR Code
-                  </h4>
+                  <h4 className="fw-bold">Scan QR Code</h4>
 
                   <p className="text-muted">
-                    Open Google Authenticator
-                    and scan this QR.
+                    Open Google Authenticator and scan this QR.
                   </p>
 
                   <img
@@ -210,21 +169,15 @@ export default function Register() {
                   />
 
                   <div className="mt-4">
-
                     <button
                       className="btn btn-success px-4"
-                      onClick={() =>
-                        navigate("/verify-2fa")
-                      }
+                      onClick={() => navigate("/verify-2fa")}
                     >
                       Continue to Verify OTP
                     </button>
-
                   </div>
-
                 </div>
               )}
-
             </div>
           </div>
         </div>

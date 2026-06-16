@@ -6,7 +6,7 @@ export const register = async (
   name: string,
   email: string,
   password: string,
-  role: string
+  role: string,
 ) => {
   const existingUser = await UserModel.findOne({ email: email.toLowerCase() });
   if (existingUser) throw new Error("Email already exists");
