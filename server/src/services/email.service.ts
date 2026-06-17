@@ -97,6 +97,9 @@ const cancellationTemplate = (data: {
   fee: number;
   cancelledBy: string;
   reason: string;
+  refundAmount: number;      // ✅ new
+  refundPercent: number;     // ✅ new
+  refundMessage: string;     // ✅ new
 }) => `
 <!DOCTYPE html>
 <html>
@@ -107,34 +110,37 @@ const cancellationTemplate = (data: {
     .header { background: linear-gradient(135deg, #ef4444, #dc2626); padding: 32px; text-align: center; color: white; }
     .header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; }
     .body { padding: 32px; }
-    .greeting { font-size: 1.1rem; font-weight: 600; color: #1e293b; margin-bottom: 8px; }
-    .subtitle { color: #475569; margin-bottom: 20px; font-size: 0.92rem; }
     .card { background: #f8fafc; border-radius: 12px; padding: 20px; margin: 20px 0; border-left: 4px solid #ef4444; }
     .row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; font-size: 0.9rem; }
     .row:last-child { border-bottom: none; }
     .label { color: #64748b; font-weight: 600; }
     .value { color: #1e293b; font-weight: 700; text-align: right; }
-    .refund-box { background: #f3e8ff; border-radius: 10px; padding: 14px 20px; margin: 16px 0; }
-    .refund-box p { margin: 0; color: #6b21a8; font-size: 0.88rem; font-weight: 600; }
+    .refund-full { background: #d1fae5; border-radius: 10px; padding: 14px 20px; margin: 16px 0; }
+    .refund-partial { background: #fef3c7; border-radius: 10px; padding: 14px 20px; margin: 16px 0; }
+    .refund-none { background: #fee2e2; border-radius: 10px; padding: 14px 20px; margin: 16px 0; }
     .footer { background: #f8fafc; padding: 20px 32px; text-align: center; color: #94a3b8; font-size: 0.78rem; border-top: 1px solid #e2e8f0; }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="header"><h1>❌ Appointment Cancelled</h1></div>
+    <div class="header"><h1>Appointment Cancelled</h1></div>
     <div class="body">
-      <p class="greeting">Hello ${data.patientName},</p>
-      <p class="subtitle">Your appointment has been cancelled.</p>
+      <p style="font-size:1.1rem;font-weight:600;color:#1e293b;">Hello ${data.patientName},</p>
+      <p style="color:#475569;">Your appointment has been cancelled.</p>
       <div class="card">
-        <div class="row"><span class="label">👨‍⚕️ Doctor</span><span class="value">${data.doctorName}</span></div>
-        <div class="row"><span class="label">📅 Date</span><span class="value">${data.date}</span></div>
-        <div class="row"><span class="label">⏰ Time</span><span class="value">${data.time}</span></div>
-        <div class="row"><span class="label">❌ Cancelled By</span><span class="value" style="text-transform:capitalize;">${data.cancelledBy}</span></div>
-        <div class="row"><span class="label">📝 Reason</span><span class="value">${data.reason}</span></div>
-        <div class="row"><span class="label">💰 Refund</span><span class="value" style="color:#6b21a8;">₹${data.fee}</span></div>
+        <div class="row"><span class="label">Doctor</span><span class="value">${data.doctorName}</span></div>
+        <div class="row"><span class="label">Date</span><span class="value">${data.date}</span></div>
+        <div class="row"><span class="label">Time</span><span class="value">${data.time}</span></div>
+        <div class="row"><span class="label">Cancelled By</span><span class="value" style="text-transform:capitalize;">${data.cancelledBy}</span></div>
+        <div class="row"><span class="label">Reason</span><span class="value">${data.reason}</span></div>
+        <div class="row"><span class="label">Fee Paid</span><span class="value">₹${data.fee}</span></div>
+        <div class="row"><span class="label">Refund</span><span class="value" style="color:${data.refundPercent === 100 ? '#065f46' : data.refundPercent === 50 ? '#92400e' : '#991b1b'};">₹${data.refundAmount} (${data.refundPercent}%)</span></div>
       </div>
-      <div class="refund-box">
-        <p>💜 Refund Initiated &nbsp;|&nbsp; ₹${data.fee} within 3-5 business days.</p>
+
+      <div class="${data.refundPercent === 100 ? 'refund-full' : data.refundPercent === 50 ? 'refund-partial' : 'refund-none'}">
+        <p style="margin:0;font-weight:600;color:${data.refundPercent === 100 ? '#065f46' : data.refundPercent === 50 ? '#92400e' : '#991b1b'};">
+          ${data.refundMessage}
+        </p>
       </div>
     </div>
     <div class="footer"><p>© 2026 HealthCare Platform. All rights reserved.</p></div>
@@ -218,7 +224,18 @@ export const sendBookingConfirmation = async (
 
 export const sendCancellationEmail = async (
   to: string,
-  data: Parameters<typeof cancellationTemplate>[0],
+  data: {
+    patientName: string;
+    doctorName: string;
+    date: string;
+    time: string;
+    fee: number;
+    cancelledBy: string;
+    reason: string;
+    refundAmount: number;      
+    refundPercent: number;     
+    refundMessage: string;    
+  }
 ): Promise<string | null> => {
   try {
     const info = await transporter.sendMail({

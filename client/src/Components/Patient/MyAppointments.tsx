@@ -2,6 +2,105 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../Api/axios";
 
+function AppointmentTimer({
+  slotTime,
+  duration,
+}: {
+  slotTime: string;
+  duration: number;
+}) {
+  const [status, setStatus] = useState<
+    "upcoming" | "live" | "ending" | "missed"
+  >("upcoming");
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date().getTime();
+      const start = new Date(slotTime).getTime();
+      const end = start + duration * 60 * 1000;
+      const graceEnd = end + 5 * 60 * 1000; 
+
+      if (now < start) {
+        setStatus("upcoming");
+        const diff = start - now;
+        const mins = Math.floor(diff / 60000);
+        const hrs = Math.floor(mins / 60);
+        setTimeLeft(hrs > 0 ? `in ${hrs}h ${mins % 60}m` : `in ${mins}m`);
+      } else if (now >= start && now < end) {
+        setStatus("live");
+        const diff = end - now;
+        const mins = Math.floor(diff / 60000);
+        setTimeLeft(`${mins}m left`);
+      } else if (now >= end && now < graceEnd) {
+        setStatus("ending");
+        const diff = graceEnd - now;
+        const secs = Math.floor(diff / 1000);
+        setTimeLeft(`closing in ${secs}s`);
+      } else {
+        setStatus("missed");
+        setTimeLeft("");
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [slotTime, duration]);
+
+  if (status === "upcoming") {
+    return (
+      <span
+        style={{
+          fontSize: "0.78rem",
+          color: "#64748b",
+          fontWeight: 600,
+        }}
+      >
+        🕐 Starts {timeLeft}
+      </span>
+    );
+  }
+
+  if (status === "live") {
+    return (
+      <span
+        style={{
+          fontSize: "0.78rem",
+          color: "#059669",
+          fontWeight: 700,
+          background: "#d1fae5",
+          padding: "3px 10px",
+          borderRadius: "20px",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "4px",
+        }}
+      >
+        🟢 Live now — {timeLeft}
+      </span>
+    );
+  }
+
+  if (status === "ending") {
+    return (
+      <span
+        style={{
+          fontSize: "0.78rem",
+          color: "#dc2626",
+          fontWeight: 700,
+          background: "#fee2e2",
+          padding: "3px 10px",
+          borderRadius: "20px",
+          animation: "pulse 1s infinite",
+        }}
+      >
+        ⚠️ Window {timeLeft}
+      </span>
+    );
+  }
+
+  return null; 
+}
+
 export default function MyAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,20 +126,18 @@ export default function MyAppointments() {
     }
   };
 
-  useEffect(() => {
-    fetchAppointments();
-  }, []);
-
   const cancel = async (id: string) => {
-    if (!confirm("Cancel this appointment? Refund will be initiated.")) return;
+    if (
+      !confirm(
+        "Cancel this appointment? Refund will be calculated based on cancellation policy.",
+      )
+    )
+      return;
     setCancellingId(id);
     try {
       const res = await api.patch(`/appointments/${id}/cancel`, {
         reason: "Cancelled by patient",
       });
-
-      console.log("Cancel response:", res.data);
-      console.log("emailPreviewUrl:", res.data.emailPreviewUrl);
 
       setCancelEmailUrl(res.data.emailPreviewUrl ?? null);
 
@@ -66,13 +163,16 @@ export default function MyAppointments() {
     pending: { bg: "#fef3c7", color: "#92400e" },
     cancelled: { bg: "#fee2e2", color: "#991b1b" },
     completed: { bg: "#eff6ff", color: "#1e40af" },
-    refunded: { bg: "#f3e8ff", color: "#6b21a8" },
+    rescheduled: { bg: "#f3e8ff", color: "#6b21a8" },
+    missed: { bg: "#fed7aa", color: "#9a3412" },
   };
 
   const paymentStyle: any = {
     paid: { bg: "#d1fae5", color: "#065f46" },
     pending: { bg: "#fef3c7", color: "#92400e" },
     refunded: { bg: "#f3e8ff", color: "#6b21a8" },
+    partial_refund: { bg: "#fef3c7", color: "#92400e" },
+    no_refund: { bg: "#fee2e2", color: "#991b1b" },
   };
 
   if (loading)
@@ -90,6 +190,7 @@ export default function MyAppointments() {
           <p style={{ color: "#64748b" }}>View and manage your appointments</p>
         </div>
 
+        {/* Cancellation email banner */}
         {cancelEmailUrl && (
           <div
             style={{
@@ -193,6 +294,7 @@ export default function MyAppointments() {
                   border: "1px solid #e2e8f0",
                 }}
               >
+                {/* Header: doctor + status */}
                 <div
                   style={{
                     display: "flex",
@@ -201,7 +303,6 @@ export default function MyAppointments() {
                     gap: "1rem",
                   }}
                 >
-                  {/* Doctor info */}
                   <div
                     style={{
                       display: "flex",
@@ -223,7 +324,6 @@ export default function MyAppointments() {
                     </div>
                   </div>
 
-                  {/* Status badges */}
                   <div
                     style={{
                       display: "flex",
@@ -260,7 +360,7 @@ export default function MyAppointments() {
 
                 <hr style={{ borderColor: "#f1f5f9", margin: "1rem 0" }} />
 
-                {/* Details */}
+                {/* Details grid */}
                 <div
                   className="row g-2"
                   style={{ fontSize: "0.88rem", color: "#475569" }}
@@ -339,15 +439,9 @@ export default function MyAppointments() {
                   </div>
                 )}
 
+                {/* Confirmation email */}
                 {emailPreviews[apt._id] && (
-                  <div
-                    style={{
-                      marginTop: "10px",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
+                  <div style={{ marginTop: "10px" }}>
                     <a
                       href={emailPreviews[apt._id]}
                       target="_blank"
@@ -368,7 +462,8 @@ export default function MyAppointments() {
                   </div>
                 )}
 
-                {apt.status === "confirmed" && (
+                {/* Join video call */}
+                {apt.status === "confirmed" && apt.roomId && (
                   <button
                     onClick={() => navigate(`/video/${apt._id}`)}
                     style={{
@@ -387,50 +482,166 @@ export default function MyAppointments() {
                   </button>
                 )}
 
-                {/* Cancellation info */}
+                {/* Cancellation email link */}
                 {apt.status === "cancelled" &&
                   emailPreviews[`cancel_${apt._id}`] && (
-                    <a
-                      href={emailPreviews[`cancel_${apt._id}`]}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        marginTop: "8px",
-                        padding: "6px 16px",
-                        borderRadius: "8px",
-                        background: "#6b21a8",
-                        color: "white",
-                        fontWeight: 700,
-                        fontSize: "0.82rem",
-                        textDecoration: "none",
-                        display: "inline-block",
-                      }}
-                    >
-                      📬 View Cancellation Email
-                    </a>
+                    <div style={{ marginTop: "10px" }}>
+                      <a
+                        href={emailPreviews[`cancel_${apt._id}`]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: "6px 16px",
+                          borderRadius: "8px",
+                          background: "#6b21a8",
+                          color: "white",
+                          fontWeight: 700,
+                          fontSize: "0.82rem",
+                          textDecoration: "none",
+                          display: "inline-block",
+                        }}
+                      >
+                        📬 View Cancellation Email
+                      </a>
+                    </div>
                   )}
 
-                {/* Cancel button */}
+                {/* Reschedule + Cancel (only one set) */}
                 {(apt.status === "confirmed" || apt.status === "pending") && (
-                  <button
-                    onClick={() => cancel(apt._id)}
-                    disabled={cancellingId === apt._id}
+                  <div
                     style={{
+                      display: "flex",
+                      gap: "10px",
                       marginTop: "1rem",
-                      padding: "8px 20px",
-                      borderRadius: "10px",
-                      border: "1px solid #fecaca",
-                      background: "#fff",
-                      color: "#ef4444",
-                      fontWeight: 600,
-                      cursor: "pointer",
-                      fontSize: "0.88rem",
+                      flexWrap: "wrap" as const,
                     }}
                   >
-                    {cancellingId === apt._id
-                      ? "Cancelling..."
-                      : "Cancel Appointment"}
-                  </button>
+                    <button
+                      onClick={() =>
+                        navigate(`/appointments/${apt._id}/reschedule`)
+                      }
+                      style={{
+                        padding: "8px 20px",
+                        borderRadius: "10px",
+                        border: "1px solid #bfdbfe",
+                        background: "#eff6ff",
+                        color: "#2563eb",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        fontSize: "0.88rem",
+                      }}
+                    >
+                      Reschedule
+                    </button>
+                    <button
+                      onClick={() => cancel(apt._id)}
+                      disabled={cancellingId === apt._id}
+                      style={{
+                        padding: "8px 20px",
+                        borderRadius: "10px",
+                        border: "1px solid #fecaca",
+                        background: "#fff",
+                        color: "#ef4444",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        fontSize: "0.88rem",
+                      }}
+                    >
+                      {cancellingId === apt._id ? "Cancelling..." : "Cancel"}
+                    </button>
+                  </div>
+                )}
+
+                {/* Refund info */}
+                {apt.status === "cancelled" &&
+                  apt.refundAmount !== undefined && (
+                    <div
+                      style={{
+                        marginTop: "10px",
+                        background:
+                          apt.refundPercent === 100
+                            ? "#d1fae5"
+                            : apt.refundPercent === 50
+                              ? "#fef3c7"
+                              : "#fee2e2",
+                        borderRadius: "8px",
+                        padding: "8px 12px",
+                        fontSize: "0.82rem",
+                        color:
+                          apt.refundPercent === 100
+                            ? "#065f46"
+                            : apt.refundPercent === 50
+                              ? "#92400e"
+                              : "#991b1b",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Refund: ₹{apt.refundAmount} ({apt.refundPercent}%)
+                      {apt.refundPercent === 100 && " — Full refund initiated"}
+                      {apt.refundPercent === 50 && " — 50% partial refund"}
+                      {apt.refundPercent === 0 &&
+                        " — No refund (cancelled too late)"}
+                    </div>
+                  )}
+
+                {/* Cancellation reason */}
+                {apt.status === "cancelled" && apt.cancellationReason && (
+                  <div
+                    style={{
+                      marginTop: "8px",
+                      fontSize: "0.8rem",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    Reason: {apt.cancellationReason}
+                  </div>
+                )}
+
+                {/* Rescheduled badge */}
+                {apt.status === "rescheduled" && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      background: "#eff6ff",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      fontSize: "0.82rem",
+                      color: "#1e40af",
+                      fontWeight: 600,
+                    }}
+                  >
+                    This appointment was rescheduled
+                    {apt.rescheduledAt &&
+                      ` on ${new Date(apt.rescheduledAt).toLocaleDateString()}`}
+                  </div>
+                )}
+
+                {apt.status === "missed" && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      background: "#fed7aa",
+                      borderRadius: "8px",
+                      padding: "10px 14px",
+                      fontSize: "0.85rem",
+                      color: "#9a3412",
+                      fontWeight: 600,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    ⚠️ You missed this appointment. The consultation window has
+                    closed.
+                  </div>
+                )}
+                {apt.status === "confirmed" && (
+                  <div style={{ marginTop: "8px" }}>
+                    <AppointmentTimer
+                      slotTime={apt.slotTime}
+                      duration={apt.duration}
+                    />
+                  </div>
                 )}
               </div>
             ))}

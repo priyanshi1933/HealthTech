@@ -33,6 +33,7 @@ import {
   cancel,
   complete,
   singleAppointment,
+  reschedule,
 } from "../controllers/appointment.controller";
 import {
   writePrescription,
@@ -41,7 +42,16 @@ import {
   doctorPrescriptions,
   downloadPDF,
 } from "../controllers/prescription.controller";
+import {
+  myAccessLogs,
+  myActivityLogs,
+  allAuditLogs,
+  patientAuditLogs,
+} from "../controllers/auditLog.controller";
 import { verifyToken, verifyAdmin, verifyDoctor } from "../middleware/auth";
+import crypto from "crypto";
+import { AppointmentModel } from "../models/appointment.model";
+
 
 const router = express.Router();
 
@@ -107,12 +117,34 @@ router.get(
 router.get("/appointments/:id", verifyToken, singleAppointment);
 router.patch("/appointments/:id/cancel", verifyToken, cancel);
 router.patch("/appointments/:id/complete", verifyToken, verifyDoctor, complete);
+router.patch("/appointments/:id/reschedule", verifyToken, reschedule);
 
 router.post("/prescriptions/write",verifyToken,verifyDoctor,writePrescription);
 router.get("/prescriptions/my",verifyToken,myPrescriptions);
 router.get("/prescriptions/doctor",verifyToken,verifyDoctor,doctorPrescriptions);
-router.get("/prescriptions/:appointmentId",verifyToken,getByAppointment);
 router.get("/prescriptions/:appointmentId/download",verifyToken,downloadPDF);
+router.get("/prescriptions/:appointmentId",verifyToken,getByAppointment);
+
+router.get("/audit/my-access", verifyToken, myAccessLogs);          
+router.get("/audit/my-activity", verifyToken, myActivityLogs);     
+router.get("/audit/all", verifyToken, verifyAdmin, allAuditLogs);   
+router.get("/audit/patient/:patientId", verifyToken, verifyAdmin, patientAuditLogs); 
+
+router.get("/fix-room-ids",async(req,res)=>{
+  try {
+    const appointments=await AppointmentModel.find({
+      $or:[{roomId:null},{roomId:{$exists:false}}],
+    });
+    for(const apt of appointments){
+      await AppointmentModel.findByIdAndUpdate(apt._id,{
+        roomId:`health-${crypto.randomBytes(6).toString("hex")}`,
+      })
+    }
+    res.json({succes:true,fixed:appointments.length,message:`Fixed ${appointments.length} appointments`});
+  } catch (error:any) {
+    res.status(500).json({success:false,message:error.message});
+  }
+})
 
 // ✅ /:id ALWAYS LAST
 router.get("/:id", getSingleDoctor);

@@ -60,6 +60,7 @@ export default function DoctorAppointments() {
     pending: { bg: "#fef3c7", color: "#92400e" },
     cancelled: { bg: "#fee2e2", color: "#991b1b" },
     completed: { bg: "#eff6ff", color: "#1e40af" },
+    missed: { bg: "#fed7aa", color: "#9a3412" },
   };
 
   if (loading)
@@ -337,10 +338,11 @@ export default function DoctorAppointments() {
                   </div>
                 )}
 
-                {apt.status === "confirmed" && (
+                {apt.status === "confirmed" && apt.roomId && (
                   <button
                     onClick={() => navigate(`/video/${apt._id}`)}
                     style={{
+                      marginTop: "10px",
                       padding: "8px 20px",
                       borderRadius: "10px",
                       border: "none",
@@ -348,13 +350,14 @@ export default function DoctorAppointments() {
                       color: "white",
                       fontWeight: 600,
                       cursor: "pointer",
+                      fontSize: "0.88rem",
                     }}
                   >
                     Join Video Call
                   </button>
                 )}
 
-                {apt.status === "completed" && (
+                {apt.status === "completed" && !apt.hasPrescription && (
                   <button
                     onClick={() => navigate(`/prescriptions/write/${apt._id}`)}
                     style={{
@@ -373,6 +376,25 @@ export default function DoctorAppointments() {
                   </button>
                 )}
 
+                {apt.status === "completed" && apt.hasPrescription && (
+                  <button
+                    onClick={() => navigate("/prescriptions/doctor")}
+                    style={{
+                      marginTop: "10px",
+                      padding: "8px 20px",
+                      borderRadius: "10px",
+                      border: "1px solid #bfdbfe",
+                      background: "#eff6ff",
+                      color: "#2563eb",
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      fontSize: "0.88rem",
+                    }}
+                  >
+                    View Prescription
+                  </button>
+                )}
+
                 {apt.status === "cancelled" && apt.cancellationReason && (
                   <div
                     style={{
@@ -385,6 +407,26 @@ export default function DoctorAppointments() {
                     }}
                   >
                     Cancelled by {apt.cancelledBy} — {apt.cancellationReason}
+                  </div>
+                )}
+
+                {apt.status === "missed" && (
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      background: "#fed7aa",
+                      borderRadius: "8px",
+                      padding: "10px 14px",
+                      fontSize: "0.85rem",
+                      color: "#9a3412",
+                      fontWeight: 600,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    ⚠️ You missed this appointment. The consultation window has
+                    closed.
                   </div>
                 )}
               </div>

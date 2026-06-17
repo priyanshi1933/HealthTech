@@ -13,8 +13,8 @@ POST http://localhost:3000/login
 content-type: application/json
 
 {
-    "email": "ami@gmail.com",
-    "password": "12345678"
+    "email": "priyanshi@gmail.com",
+    "password": "Priyanshi@123"
 }
 
 ###
@@ -25,7 +25,7 @@ Content-Type: application/json
 {
   "email": "rajan@gmail.com",
   "password": "Rajan@12345",
-  "totpToken": "021705"
+  "totpToken": "163470"
 }
 
 ###
@@ -342,3 +342,34 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1M
 ### Download PDF
 GET http://localhost:3000/prescriptions/6a30dcc8ea79d457bd9e7762/download
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmY5NDMzYmRmZTRmM2MxMTlmYzNjMCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNjAzNDMwLCJleHAiOjE3ODE2MDcwMzB9.oQi7bt-nABsTcJvk5opoqTmoBK0tAqmr48h4bBVUiCE
+
+### Patient: see who accessed my data
+GET http://localhost:3000/audit/my-access
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmY5NDMzYmRmZTRmM2MxMTlmYzNjMCIsInJvbGUiOiJwYXRpZW50IiwiaWF0IjoxNzgxNjkyMDQxLCJleHAiOjE3ODE2OTU2NDF9.BCxtH_4uv3L--aM3w7pHpzDz56JR35Lpto4AfbUlSU8
+
+###
+
+### Doctor: see my activity
+GET http://localhost:3000/audit/my-activity
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJlMzA3M2Q2YjJlY2VmMTkwYTRkOCIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE2OTIwOTAsImV4cCI6MTc4MTY5NTY5MH0.dbNaS--w5T4xWEHIvb-LlRorDgbJggD38VTCUY2C3cQ
+
+###
+
+### Admin: all logs
+GET http://localhost:3000/audit/all
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTY5MjEyNiwiZXhwIjoxNzgxNjk1NzI2fQ.CzGf1QbswdbBf614DG1skHPwtIAQ3DllJinfeLw6BQA
+
+###
+
+### Admin: filter by resource type
+GET http://localhost:3000/audit/all?resourceType=prescription
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTY5MjEyNiwiZXhwIjoxNzgxNjk1NzI2fQ.CzGf1QbswdbBf614DG1skHPwtIAQ3DllJinfeLw6BQA
+
+###
+
+### Admin: specific patient's access history
+GET http://localhost:3000/audit/patient/6a2b9bee8efe10429556c580
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxOGVmZTEwNDI5NTU2YzU4MSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc4MTY5MjEyNiwiZXhwIjoxNzgxNjk1NzI2fQ.CzGf1QbswdbBf614DG1skHPwtIAQ3DllJinfeLw6BQA
+
+###
+GET http://localhost:3000/fix-room-ids

@@ -7,6 +7,8 @@ import {
   sendCancellationEmail,
 } from "./email.service";
 import { UserModel } from "../models/user.model";
+import { calculateRefund } from "../utils/refundCalculator";
+import { PrescriptionModel } from "../models/prescription.model";
 import crypto from "crypto";
 
 export const bookAppointment = async (
@@ -68,7 +70,7 @@ export const bookAppointment = async (
     status: "confirmed",
     paymentStatus: "paid",
     paymentId,
-    roomId, 
+    roomId,
   });
 
   const appointmentObj = appointment.toObject();
@@ -106,9 +108,23 @@ export const getDoctorAppointments = async (userId: string) => {
   const doctor = await DoctorModel.findOne({ userId });
   if (!doctor) throw new Error("Doctor profile not found");
 
-  return await AppointmentModel.find({ doctorId: doctor._id })
+  const appointments = await AppointmentModel.find({ doctorId: doctor._id })
     .populate("patientId", "name email")
     .sort({ slotTime: 1 });
+
+  const appointmentIds = appointments.map((a) => a._id);
+  const prescriptions = await PrescriptionModel.find({
+    appointmentId: { $in: appointmentIds },
+  }).select("appointmentId");
+
+  const prescribedIds = new Set(
+    prescriptions.map((p) => p.appointmentId.toString()),
+  );
+
+  return appointments.map((apt) => ({
+    ...apt.toObject(),
+    hasPrescription: prescribedIds.has(apt._id.toString()),
+  }));
 };
 
 export const cancelAppointment = async (
@@ -116,7 +132,11 @@ export const cancelAppointment = async (
   userId: string,
   role: string,
   reason?: string,
-): Promise<{ appointment: any; emailPreviewUrl: string | null }> => {
+): Promise<{
+  appointment: any;
+  emailPreviewUrl: string | null;
+  refundInfo: any;
+}> => {
   const existingAppointment = await AppointmentModel.findById(appointmentId)
     .populate("patientId", "name email")
     .populate({
@@ -128,7 +148,9 @@ export const cancelAppointment = async (
   if (existingAppointment.status === "cancelled")
     throw new Error("Already cancelled");
   if (existingAppointment.status === "completed")
-    throw new Error("Cannot cancel completed");
+    throw new Error("Cannot cancel completed appointment");
+  if (existingAppointment.status === "rescheduled")
+    throw new Error("Cannot cancel a rescheduled appointment");
 
   if (role === "patient") {
     if (existingAppointment.patientId._id.toString() !== userId) {
@@ -145,11 +167,19 @@ export const cancelAppointment = async (
     throw new Error("Not authorized");
   }
 
+  const refundInfo = calculateRefund(
+    existingAppointment.slotTime,
+    existingAppointment.fee,
+    role,
+  );
+
   const updated = await AppointmentModel.findByIdAndUpdate(
     appointmentId,
     {
       status: "cancelled",
-      paymentStatus: "refunded",
+      paymentStatus: refundInfo.paymentStatus,
+      refundAmount: refundInfo.refundAmount,
+      refundPercent: refundInfo.refundPercent,
       cancelledBy: role as "patient" | "doctor" | "admin",
       cancellationReason: reason || "No reason provided",
       cancelledAt: new Date(),
@@ -159,7 +189,6 @@ export const cancelAppointment = async (
 
   const patient = existingAppointment.patientId as any;
   const doctor = existingAppointment.doctorId as any;
-
   const slotInPatientTz = DateTime.fromJSDate(
     existingAppointment.slotTime,
   ).setZone(existingAppointment.patientTimezone);
@@ -172,9 +201,12 @@ export const cancelAppointment = async (
     fee: existingAppointment.fee,
     cancelledBy: role,
     reason: reason || "No reason provided",
+    refundAmount: refundInfo.refundAmount,
+    refundPercent: refundInfo.refundPercent,
+    refundMessage: refundInfo.message,
   });
 
-  return { appointment: updated, emailPreviewUrl };
+  return { appointment: updated, emailPreviewUrl, refundInfo };
 };
 
 export const completeAppointment = async (
@@ -225,4 +257,89 @@ export const getAppointmentById = async (
   }
 
   return appointment;
+};
+
+export const rescheduleAppointment = async (
+  appointmentId: string,
+  userId: string,
+  role: string,
+  data: {
+    newSlotTimeUTC: string;
+    reason?: string;
+  },
+): Promise<{ oldAppointment: any; newAppointment: any }> => {
+  const existing = await AppointmentModel.findById(appointmentId)
+    .populate("patientId", "name email")
+    .populate({
+      path: "doctorId",
+      populate: { path: "userId", select: "name" },
+    });
+
+  if (!existing) throw new Error("Appointment not found");
+  if (existing.status !== "confirmed" && existing.status !== "pending") {
+    throw new Error(
+      "Only confirmed or pending appointments can be rescheduled",
+    );
+  }
+
+  const doctor = await DoctorModel.findOne({ userId });
+  const isPatient = existing.patientId._id.toString() === userId;
+  const isDoctor = doctor?._id.toString() === existing.doctorId._id.toString();
+
+  if (!isPatient && !isDoctor) throw new Error("Not authorized to reschedule");
+
+  const newSlotTime = new Date(data.newSlotTimeUTC);
+  if (isNaN(newSlotTime.getTime())) throw new Error("Invalid slot time");
+  if (newSlotTime < new Date())
+    throw new Error("Cannot reschedule to a past slot");
+
+  
+  const slotConflict = await AppointmentModel.findOne({
+    doctorId: existing.doctorId,
+    slotTime: newSlotTime,
+    status: { $in: ["pending", "confirmed"] },
+    _id: { $ne: appointmentId },
+  });
+  if (slotConflict) throw new Error("New slot is already booked");
+
+  const anyRule = await AvailabilityModel.findOne({
+    doctorId: existing.doctorId,
+    type: "recurring",
+    isActive: true,
+  });
+  const doctorTimezone = anyRule?.timezone || "Asia/Kolkata";
+  const newSlotTimeLocal = DateTime.fromJSDate(newSlotTime)
+    .setZone(doctorTimezone)
+    .toFormat("HH:mm");
+
+  await AppointmentModel.findByIdAndUpdate(appointmentId, {
+    status: "rescheduled",
+    rescheduledAt: new Date(),
+    rescheduledBy: role as "patient" | "doctor",
+    originalSlotTime: existing.slotTime,
+  });
+
+  const newRoomId = `health-${crypto.randomBytes(6).toString("hex")}`;
+
+  const newAppointment = await AppointmentModel.create({
+    patientId: existing.patientId,
+    doctorId: existing.doctorId,
+    slotTime: newSlotTime,
+    slotTimeLocal: newSlotTimeLocal,
+    patientTimezone: existing.patientTimezone,
+    doctorTimezone,
+    duration: existing.duration,
+    fee: existing.fee,
+    status: "confirmed",
+    paymentStatus: "paid",
+    paymentId: existing.paymentId,
+    roomId: newRoomId,
+    rescheduledFrom: existing._id,
+  });
+
+  await AppointmentModel.findByIdAndUpdate(appointmentId, {
+    rescheduledTo: newAppointment._id,
+  });
+
+  return { oldAppointment: existing, newAppointment };
 };

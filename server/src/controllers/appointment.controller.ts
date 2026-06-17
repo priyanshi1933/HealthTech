@@ -6,7 +6,9 @@ import {
   cancelAppointment,
   completeAppointment,
   getAppointmentById,
+  rescheduleAppointment,
 } from "../services/appointment.service";
+import { logAccess } from "../services/auditLog.service";
 
 export const book = async (req: Request, res: Response) => {
   try {
@@ -69,11 +71,11 @@ export const cancel = async (req: Request, res: Response) => {
     const role = (req as any).user.role;
     const { reason } = req.body;
 
-    const { appointment, emailPreviewUrl } = await cancelAppointment(
+    const { appointment, emailPreviewUrl, refundInfo } = await cancelAppointment(
       String(req.params.id),
       userId,
       role,
-      reason,
+      reason
     );
 
     res.json({
@@ -81,11 +83,13 @@ export const cancel = async (req: Request, res: Response) => {
       message: "Appointment cancelled",
       data: appointment,
       emailPreviewUrl,
+      refundInfo, 
     });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
 
 export const complete = async (req: Request, res: Response) => {
   try {
@@ -113,7 +117,48 @@ export const singleAppointment = async (req: Request, res: Response) => {
       userId,
       role,
     );
+    if (role === "doctor") {
+      await logAccess({
+        action: "VIEW_APPOINTMENT_RECORD",
+        performedBy: userId,
+        performedByRole: role,
+        targetPatientId: (appointment.patientId as any)._id.toString(),
+        targetResourceId: appointment._id.toString(),
+        resourceType: "appointment",
+        req,
+      });
+    }
     res.json({ success: true, data: appointment });
+  } catch (error: any) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export const reschedule = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user.id;
+    const role = (req as any).user.role;
+    const { newSlotTimeUTC, reason } = req.body;
+
+    if (!newSlotTimeUTC) {
+      return res.status(400).json({
+        success: false,
+        message: "newSlotTimeUTC is required",
+      });
+    }
+
+    const result = await rescheduleAppointment(
+      String(req.params.id),
+      userId,
+      role,
+      { newSlotTimeUTC, reason }
+    );
+
+    res.json({
+      success: true,
+      message: "Appointment rescheduled successfully",
+      data: result,
+    });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });
   }

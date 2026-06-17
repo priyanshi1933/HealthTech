@@ -2,6 +2,7 @@ import { Request,Response } from "express";
 import path from "path";
 import fs from "fs";
 import { createPrescription,getPrescriptionByAppointment,getPatientPrescriptions,getDoctorPrescriptions } from "../services/prescription.service";
+import { logAccess } from "../services/auditLog.service";
 
 export const writePrescription = async (req: Request, res: Response) => {
   try {
@@ -43,6 +44,17 @@ export const getByAppointment = async (req: Request, res: Response) => {
       userId,
       role
     );
+    if(role!=="patient"){
+      await logAccess({
+        action:"VIEW_PRESCRIPTION",
+        performedBy:userId,
+        performedByRole:role,
+        targetPatientId:prescription.patientId._id.toString(),
+        targetResourceId:prescription._id.toString(),
+        resourceType:"prescription",
+        req,
+      })
+    }
     res.json({ success: true, data: prescription });
   } catch (error: any) {
     res.status(404).json({ success: false, message: error.message });
@@ -86,6 +98,16 @@ export const downloadPDF = async (req: Request, res: Response) => {
     if (!prescription.pdfPath) {
       return res.status(404).json({ success: false, message: "PDF not found" });
     }
+
+    await logAccess({
+      action: "DOWNLOAD_PRESCRIPTION_PDF",
+      performedBy: userId,
+      performedByRole: role,
+      targetPatientId: prescription.patientId._id.toString(),
+      targetResourceId: prescription._id.toString(),
+      resourceType: "prescription",
+      req,
+    });
 
     if (!fs.existsSync(prescription.pdfPath)) {
       return res.status(404).json({ success: false, message: "PDF file missing" });
