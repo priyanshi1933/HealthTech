@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import "./services/email.service";
 import { checkMissedAppointments } from "./services/missedAppointment.service";
 
+
 dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
 
 const getMongoUri = () => {

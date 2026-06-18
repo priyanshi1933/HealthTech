@@ -59,6 +59,21 @@ export const doctorAppointments = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user.id;
     const appointments = await getDoctorAppointments(userId);
+    if (appointments.length > 0) {
+      for (const apt of appointments) {
+        await logAccess({
+          action: "VIEW_PATIENT_PROFILE",
+          performedBy: userId,
+          performedByRole: "doctor",
+          targetPatientId: (apt as any).patientId?._id?.toString()
+            || (apt as any).patientId?.toString(),
+          targetResourceId: apt._id?.toString(),
+          resourceType: "patient_profile",
+          req,
+          metadata: { context: "appointment_list" },
+        });
+      }
+    }
     res.json({ success: true, count: appointments.length, data: appointments });
   } catch (error: any) {
     res.status(500).json({ success: false, message: error.message });

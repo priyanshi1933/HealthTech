@@ -40,7 +40,7 @@ export const generatePrescriptionPDF = async (data: {
       .fillColor("white")
       .fontSize(20)
       .font("Helvetica-Bold")
-      .text("HealthCare Platform", 50, 22); // ✅ no emoji
+      .text("HealthCare Platform", 50, 22); 
 
     doc
       .fontSize(11)
@@ -52,7 +52,7 @@ export const generatePrescriptionPDF = async (data: {
       .fontSize(10)
       .text(`Date: ${data.date}`, 50, 67);
 
-    // ✅ prescription ID on right
+    
     doc
       .fontSize(9)
       .text(`Ref: ${data.prescriptionId.slice(-8).toUpperCase()}`, 400, 67, {

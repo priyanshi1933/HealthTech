@@ -19,6 +19,11 @@ import MyPrescriptions from "./Components/Patient/MyPrescriptions";
 import DoctorPrescriptions from "./Components/Doctor/DoctorPrescriptions";
 import VideoConsult from "./Components/VideoConsult";
 import RescheduleAppointment from "./Components/Patient/RescheduleAppointment";
+import WhoViewedMyData from "./Components/Patient/WhoViewedMyData";
+import MyActivity from "./Components/Doctor/MyActivity";
+import AuditDashboard from "./Components/Admin/AuditDashboard";
+import ViewPrescription from "./Components/ViewPrescription";
+import SymptomChecker from "./Components/SymptomChecker";
 
 export default function App() {
   return (
@@ -129,6 +134,14 @@ export default function App() {
           }
         />
         <Route
+          path="/prescriptions/view/:appointmentId"
+          element={
+            <ProtectedRoute>
+              <ViewPrescription />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/video/:appointmentId"
           element={
             <ProtectedRoute>
@@ -138,10 +151,46 @@ export default function App() {
         />
 
         <Route
+          path="/my-data-access"
+          element={
+            <ProtectedRoute>
+              <WhoViewedMyData />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/my-activity"
+          element={
+            <ProtectedRoute>
+              <MyActivity />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/audit"
+          element={
+            <ProtectedRoute>
+              <AuditDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
           path="/admin"
           element={
             <ProtectedRoute>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/symptom-checker"
+          element={
+            <ProtectedRoute>
+              <SymptomChecker />
             </ProtectedRoute>
           }
         />

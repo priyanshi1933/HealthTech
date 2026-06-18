@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import api from "../Api/axios";
 
 export default function DoctorsList() {
   const [doctors, setDoctors] = useState<any[]>([]);
   const [specialty, setSpecialty] = useState("");
   const [loading, setLoading] = useState(true);
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const fetchDoctors = async (filter?: string) => {
@@ -21,7 +22,13 @@ export default function DoctorsList() {
   };
 
   useEffect(() => {
-    fetchDoctors();
+    const specialtyParam = searchParams.get("specialty");
+    if (specialtyParam) {
+      setSpecialty(specialtyParam);
+      fetchDoctors(specialtyParam); 
+    } else {
+      fetchDoctors();
+    }
   }, []);
 
   return (

@@ -51,6 +51,7 @@ import {
 import { verifyToken, verifyAdmin, verifyDoctor } from "../middleware/auth";
 import crypto from "crypto";
 import { AppointmentModel } from "../models/appointment.model";
+import { analyzeSymptoms } from "../controllers/symptomChecker.controller";
 
 
 const router = express.Router();
@@ -129,6 +130,8 @@ router.get("/audit/my-access", verifyToken, myAccessLogs);
 router.get("/audit/my-activity", verifyToken, myActivityLogs);     
 router.get("/audit/all", verifyToken, verifyAdmin, allAuditLogs);   
 router.get("/audit/patient/:patientId", verifyToken, verifyAdmin, patientAuditLogs); 
+
+router.post("/symptom-checker",analyzeSymptoms);
 
 router.get("/fix-room-ids",async(req,res)=>{
   try {

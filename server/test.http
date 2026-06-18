@@ -373,3 +373,31 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmI5Y2IxO
 
 ###
 GET http://localhost:3000/fix-room-ids
+
+### Check symptoms
+POST http://localhost:3000/symptom-checker
+Content-Type: application/json
+
+{
+  "symptoms": "I have chest pain and shortness of breath with irregular heartbeat"
+}
+
+###
+
+### Multiple specialties
+POST http://localhost:3000/symptom-checker
+Content-Type: application/json
+
+{
+  "symptoms": "I have headache, dizziness and my eye vision is blurry"
+}
+
+###
+
+### No match
+POST http://localhost:3000/symptom-checker
+Content-Type: application/json
+
+{
+  "symptoms": "I feel very tired and have weight gain"
+}

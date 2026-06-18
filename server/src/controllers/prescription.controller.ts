@@ -45,6 +45,7 @@ export const getByAppointment = async (req: Request, res: Response) => {
       role
     );
     if(role!=="patient"){
+      console.log("Logging prescription access...");
       await logAccess({
         action:"VIEW_PRESCRIPTION",
         performedBy:userId,
@@ -53,7 +54,8 @@ export const getByAppointment = async (req: Request, res: Response) => {
         targetResourceId:prescription._id.toString(),
         resourceType:"prescription",
         req,
-      })
+      });
+      console.log("Audit log saved");
     }
     res.json({ success: true, data: prescription });
   } catch (error: any) {

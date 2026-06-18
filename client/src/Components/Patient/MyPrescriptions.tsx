@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import api from "../../Api/axios";
+import { useNavigate } from "react-router-dom";
 
 export default function MyPrescriptions() {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate=useNavigate();
 
   useEffect(() => {
     const fetch = async () => {
@@ -90,7 +93,7 @@ export default function MyPrescriptions() {
                       </div>
                     </div>
                   </div>
-                  <button
+                  {/* <button
                     onClick={() => downloadPDF(
                       p.appointmentId?._id || p.appointmentId,
                       p.patientId?.name || "patient"
@@ -108,9 +111,57 @@ export default function MyPrescriptions() {
                     }}
                   >
                     Download PDF
-                  </button>
+                  </button> */}
+                   <div
+                    style={{
+                      display: "flex",
+                      gap: "8px",
+                      alignItems: "flex-start",
+                      flexWrap: "wrap" as const,
+                    }}
+                  >
+                    <button
+                      onClick={() =>
+                        navigate(
+                          `/prescriptions/view/${p.appointmentId?._id || p.appointmentId}`,
+                        )
+                      } // ✅ new
+                      style={{
+                        padding: "8px 20px",
+                        borderRadius: "10px",
+                        border: "1px solid #bfdbfe",
+                        background: "#eff6ff",
+                        color: "#2563eb",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        fontSize: "0.88rem",
+                        height: "fit-content",
+                      }}
+                    >
+                      View Prescription
+                    </button>
+                    <button
+                      onClick={() =>
+                        downloadPDF(p.appointmentId?._id || p.appointmentId,
+                      p.patientId?.name || "patient")
+                      }
+                      style={{
+                        padding: "8px 20px",
+                        borderRadius: "10px",
+                        border: "none",
+                        background: "linear-gradient(135deg,#2563eb,#06b6d4)",
+                        color: "white",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        fontSize: "0.88rem",
+                        height: "fit-content",
+                      }}
+                    >
+                      Download PDF
+                    </button>
+                  </div>
                 </div>
-
+                
                 <hr style={{ borderColor: "#f1f5f9", margin: "1rem 0" }} />
 
                 {/* Diagnosis */}

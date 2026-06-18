@@ -115,7 +115,7 @@ export default function WritePrescription() {
         </p>
         <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
           <button
-            onClick={() => navigate("/prescriptions/my")}
+            onClick={() => navigate(`/prescriptions/view/${appointmentId}`)}
             style={{
               padding: "10px 24px",
               borderRadius: "10px",

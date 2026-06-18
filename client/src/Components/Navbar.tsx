@@ -295,11 +295,17 @@ export default function Navbar() {
               <NavLink to="/doctors" onClick={closeMenu}>
                 Find Doctors
               </NavLink>
+              <NavLink to="/symptom-checker" onClick={closeMenu}>
+                Symptom Checker
+              </NavLink>
               <NavLink to="/appointments" onClick={closeMenu}>
                 My Appointments
               </NavLink>
               <NavLink to="/prescriptions/my" onClick={closeMenu}>
                 My Prescriptions
+              </NavLink>
+              <NavLink to="/my-data-access" onClick={closeMenu}>
+                Who Viewed My Data
               </NavLink>
               <NavLink to="/profile" onClick={closeMenu}>
                 Profile
@@ -321,6 +327,9 @@ export default function Navbar() {
               <NavLink to="/prescriptions/doctor" onClick={closeMenu}>
                 Prescriptions
               </NavLink>
+              <NavLink to="/my-activity" onClick={closeMenu}>
+                My Activity
+              </NavLink>
               <NavLink to="/doctors" onClick={closeMenu}>
                 Doctors
               </NavLink>
@@ -332,10 +341,19 @@ export default function Navbar() {
               <NavLink to="/admin" onClick={closeMenu}>
                 Dashboard
               </NavLink>
+              <NavLink to="/admin/audit" onClick={closeMenu}>
+                Audit Trail
+              </NavLink>
               <NavLink to="/doctors" onClick={closeMenu}>
                 Doctors
               </NavLink>
             </>
+          )}
+
+          {!role && (
+            <NavLink to="/symptom-checker" onClick={closeMenu}>
+              Symptom Checker
+            </NavLink>
           )}
         </div>
 
