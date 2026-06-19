@@ -1,4 +1,4 @@
-body {
+/* body {
   background: #f4f7fb;
   font-family: "Segoe UI", sans-serif;
 }
@@ -47,4 +47,135 @@ body {
   border-radius: 20px;
   border: none;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+} */
+
+/* ── Reset & Base ─────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f4f7fb;
+  font-family: "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* ── Auth pages ───────────────────────────────────────────── */
+.auth-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  padding: 1rem;
+}
+
+.auth-card {
+  border: none;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+  width: 100%;
+}
+
+.left-panel {
+  background: linear-gradient(135deg, #2563eb, #0ea5e9);
+  color: white;
+  padding: 2rem;
+}
+
+.right-panel {
+  padding: 2rem;
+  background: white;
+}
+
+.form-control {
+  height: 50px;
+  border-radius: 12px;
+}
+
+.btn-main {
+  background: #2563eb;
+  border: none;
+  border-radius: 12px;
+  height: 50px;
+  font-weight: 600;
+}
+
+.btn-main:hover {
+  background: #1d4ed8;
+}
+
+.profile-card {
+  border-radius: 20px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Mobile navbar ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .auth-page {
+    padding: 0.75rem;
+  }
+
+  .right-panel {
+    padding: 1.5rem;
+  }
+
+  .left-panel {
+    padding: 1.5rem;
+    text-align: center;
+  }
+}
+
+/* ── Desktop nav / Mobile hamburger ───────────────────────── */
+.desktop-nav {
+  display: flex;
+}
+
+.hamburger-btn {
+  display: none !important;
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .hamburger-btn {
+    display: block !important;
+  }
+}
+
+/* ── Mobile padding for all pages ────────────────────────── */
+@media (max-width: 768px) {
+  /* reduce padding on all page wrappers */
+  div[style*="padding: 2rem"] {
+    padding: 1rem !important;
+  }
+
+  /* grid cols collapse */
+  .row {
+    margin: 0 !important;
+  }
+
+  /* tables scroll horizontally */
+  div[style*="gridTemplateColumns"] {
+    overflow-x: auto;
+  }
+
+  /* buttons full width on mobile */
+  .mobile-full {
+    width: 100% !important;
+  }
+}
+
+/* ── Card mobile fixes ────────────────────────────────────── */
+@media (max-width: 576px) {
+  .profile-card {
+    padding: 1rem !important;
+  }
+
+  .auth-card {
+    border-radius: 16px;
+  }
 }

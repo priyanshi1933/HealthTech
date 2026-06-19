@@ -49,7 +49,7 @@ export default function Login() {
   return (
     <div className="auth-page d-flex align-items-center">
       <div className="container">
-        <div className="card auth-card mx-auto" style={{ maxWidth: "500px" }}>
+        <div className="card auth-card mx-auto" style={{ maxWidth: "440px",width:"100%" }}>
           <div className="right-panel">
             <h2 className="fw-bold text-center mb-1">Welcome Back</h2>
             <p className="text-center text-muted mb-4">Login to continue</p>

@@ -7,6 +7,9 @@ import {
   deleteRecurringSlot,
   deleteBlockDate,
   generateSlots,
+  addLeaveWithCancellation,
+  removeLeave,
+  getDoctorLeaves,
 } from "../services/availability.service";
 
 export const addRecurring = async (req: Request, res: Response) => {
@@ -126,3 +129,54 @@ export const getSlotsForDate = async (req: Request, res: Response) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const addLeave=async(req:Request,res:Response)=>{
+  try {
+    const userId=(req as any).user.id;
+    const {blockDate,blockReason,timezone}=req.body;
+    if(!blockDate){
+      return res.status(400).json({
+        success:false,
+        message:"blockDate is required",
+      });
+    }
+    const result=await addLeaveWithCancellation(userId,{
+      blockDate,
+      blockReason,
+      timezone:timezone || "Asia/Kolkata",
+    });
+    res.status(201).json({
+        success:true,
+        message:`Leave added. ${result.cancelledAppointments} appointment(s) cancelled and patients notified.`,
+        data:{
+          block:result.block,
+          cancelledAppointments:result.cancelledAppointments,
+          notifiedPatients:result.notifiedPatients,
+          emailPreviewUrls:result.emailPreviewUrls,
+        },
+    });
+  } catch (error:any) {
+    res.status(400).json({success:false,message:error.message});
+  }
+}
+
+export const getLeaves=async(req:Request,res:Response)=>{
+  try {
+    const userId=(req as any).user.id;
+    const leaves=await getDoctorLeaves(userId);
+    res.json({success:true,data:leaves});
+  } catch (error:any) {
+    res.status(400).json({success:false,message:error.message});
+  }
+}
+
+export const removeLeaveHandler=async(req:Request,res:Response)=>{
+  try {
+    const userId=(req as any).user.id;
+    const result=await removeLeave(userId,String(req.params.id));
+    res.json({success:true,...result});
+  } catch (error:any) {
+    res.status(400).json({success:false,message:error.message});
+  }
+}
+

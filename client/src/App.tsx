@@ -24,6 +24,7 @@ import MyActivity from "./Components/Doctor/MyActivity";
 import AuditDashboard from "./Components/Admin/AuditDashboard";
 import ViewPrescription from "./Components/ViewPrescription";
 import SymptomChecker from "./Components/SymptomChecker";
+import LeaveManagement from "./Components/Doctor/LeaveManagement";
 
 export default function App() {
   return (
@@ -106,6 +107,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <Availability />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/doctor/leaves"
+          element={
+            <ProtectedRoute>
+              <LeaveManagement />
             </ProtectedRoute>
           }
         />

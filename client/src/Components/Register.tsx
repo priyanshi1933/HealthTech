@@ -59,10 +59,8 @@ export default function Register() {
           <div className="row g-0">
             {/* Left Side */}
             <div
-              className="col-md-5 text-white d-flex flex-column justify-content-center align-items-center p-5"
-              style={{
-                background: "linear-gradient(135deg,#0d6efd,#20c997)",
-              }}
+              className="col-md-5 d-none d-md-flex text-white flex-column justify-content-center align-items-center p-4"
+              style={{ background: "linear-gradient(135deg,#0d6efd,#20c997)" }}
             >
               <FaUserMd size={120} />
 

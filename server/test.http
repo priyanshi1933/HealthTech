@@ -23,9 +23,9 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "email": "rajan@gmail.com",
-  "password": "Rajan@12345",
-  "totpToken": "163470"
+  "email": "yusuf@gmail.com",
+  "password": "Yusuf@12345",
+  "totpToken": "912862"
 }
 
 ###
@@ -401,3 +401,26 @@ Content-Type: application/json
 {
   "symptoms": "I feel very tired and have weight gain"
 }
+
+### Add leave — cancels all appointments on that date
+POST http://localhost:3000/leaves/add
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE4NDc2ODEsImV4cCI6MTc4MTg1MTI4MX0.kx90xPB6DBcOmV98nqL5r-RNvU6o3L5u9VR_8PBQmzM
+
+{
+  "blockDate": "2026-06-25",
+  "blockReason": "Medical Conference",
+  "timezone": "Asia/Kolkata"
+}
+
+###
+
+### Get all leaves
+GET http://localhost:3000/leaves
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE4NDc5NjgsImV4cCI6MTc4MTg1MTU2OH0.Y-4ktD8XHIbiTCJCQVuKx-QlK84kP6tVO33ZDtE8YUc
+
+###
+
+### Remove leave
+DELETE http://localhost:3000/leaves/6a34d6965704e081036f96c2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMmJkODc1MjI1NjljMjFlYjY4NjMxYiIsInJvbGUiOiJkb2N0b3IiLCJpYXQiOjE3ODE4NDc5NjgsImV4cCI6MTc4MTg1MTU2OH0.Y-4ktD8XHIbiTCJCQVuKx-QlK84kP6tVO33ZDtE8YUc

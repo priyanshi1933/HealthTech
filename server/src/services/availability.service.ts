@@ -1,6 +1,8 @@
 import { AvailabilityModel } from "../models/availability.model";
 import { AppointmentModel } from "../models/appointment.model";
 import { DoctorModel } from "../models/doctor.model";
+import { sendCancellationEmail } from "./email.service";
+import { calculateRefund } from "../utils/refundCalculator";
 import { DateTime, Info } from "luxon";
 
 const DAYS = [
@@ -272,4 +274,122 @@ export const generateSlots = async (
     blocked: false,
     slots: unique.sort((a, b) => a.timeUTC.localeCompare(b.timeUTC)),
   };
+};
+
+export const addLeaveWithCancellation = async (
+  userId: string,
+  data: {
+    blockDate: string;
+    blockReason?: string;
+    timezone: string;
+  },
+): Promise<{
+  block: any;
+  cancelledAppointments: number;
+  notifiedPatients: string[];
+  emailPreviewUrls: string[]; 
+}> => {
+  const doctorId = await getDoctorId(userId);
+  const dt = DateTime.fromISO(data.blockDate, { zone: data.timezone });
+  if (!dt.isValid) throw new Error("Invalid date or timezone");
+  const nowInDoctorTz = DateTime.now().setZone(data.timezone).startOf("day");
+  if (dt.startOf("day") < nowInDoctorTz) {
+    throw new Error("Cannot block a past date");
+  }
+  const blockDateUTC = dt.startOf("day").toUTC().toJSDate();
+  const existing = await AvailabilityModel.findOne({
+    doctorId,
+    type: "block",
+    blockDate: blockDateUTC,
+    isActive: true,
+  });
+  if (existing) throw new Error("This date is already blocked");
+  const block = await AvailabilityModel.create({
+    doctorId,
+    type: "block",
+    blockDate: blockDateUTC,
+    blockReason: data.blockReason || "Doctor on leave",
+    timezone: data.timezone,
+  });
+  const startOfDay = dt.startOf("day").toUTC().toJSDate();
+  const endOfDay = dt.endOf("day").toUTC().toJSDate();
+  const affectedAppointments = await AppointmentModel.find({
+    doctorId,
+    slotTime: { $gte: startOfDay, $lte: endOfDay },
+    status: { $in: ["pending", "confirmed"] },
+  })
+    .populate("patientId", "name email")
+    .populate({
+      path: "doctorId",
+      populate: { path: "userId", select: "name" },
+    });
+  const notifiedPatients: string[] = [];
+  const emailPreviewUrls: string[] = [];
+  for (const apt of affectedAppointments) {
+    console.log(
+      `Processing appointment ${apt._id} for patient ${(apt.patientId as any).email}`,
+    );
+    const refundInfo = calculateRefund(apt.slotTime, apt.fee, "doctor");
+    console.log("Refund info:", refundInfo);
+    await AppointmentModel.findByIdAndUpdate(apt._id, {
+      status: "cancelled",
+      paymentStatus: refundInfo.paymentStatus,
+      refundAmount: refundInfo.refundAmount,
+      refundPercent: refundInfo.refundPercent,
+      cancelledBy: "doctor",
+      cancellationReason: data.blockReason || "Doctor on leave",
+      cancelledAt: new Date(),
+    });
+    const patient = apt.patientId as any;
+    const doctor = apt.doctorId as any;
+    console.log("Patient email:", patient.email); 
+    console.log("Doctor name:", doctor?.userId?.name); 
+
+    const slotInPatientTz = DateTime.fromJSDate(apt.slotTime).setZone(
+      apt.patientTimezone,
+    );
+    const emailUrl=await sendCancellationEmail(patient.email, {
+      patientName: patient.name,
+      doctorName: doctor?.userId?.name || "Doctor",
+      date: slotInPatientTz.toFormat("dd MMM yyyy"),
+      time: slotInPatientTz.toFormat("HH:mm"),
+      fee: apt.fee,
+      cancelledBy: "doctor",
+      reason: data.blockReason || "Doctor on leave",
+      refundAmount: refundInfo.refundAmount,
+      refundPercent: refundInfo.refundPercent,
+      refundMessage: refundInfo.message,
+    });
+    console.log("Email preview URL:", emailUrl);
+    if (emailUrl) emailPreviewUrls.push(emailUrl);
+    notifiedPatients.push(patient.email);
+    console.log(
+      `Cancelled appointment ${apt._id} and notified ${patient.email}`,
+    );
+  }
+  return {
+    block,
+    cancelledAppointments: affectedAppointments.length,
+    notifiedPatients,
+    emailPreviewUrls,
+  };
+};
+
+export const removeLeave = async (userId: string, blockId: string) => {
+  const doctorId = await getDoctorId(userId);
+  const block = await AvailabilityModel.findOne({ _id: blockId, doctorId });
+  if (!block) throw new Error("Leave not found");
+  await AvailabilityModel.findByIdAndUpdate(blockId, { isActive: false });
+  return { mesage: "Leave removed" };
+};
+
+export const getDoctorLeaves = async (userId: string) => {
+  const doctor = await DoctorModel.findOne({ userId });
+  if (!doctor) throw new Error("Doctor profile not found");
+  return await AvailabilityModel.find({
+    doctorId: doctor._id,
+    type: "block",
+    isActive: true,
+    blockDate: { $gte: new Date() },
+  }).sort({ blockDate: 1 });
 };

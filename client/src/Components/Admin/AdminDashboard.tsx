@@ -177,15 +177,19 @@ export default function AdminDashboard() {
                   style={{
                     background: "#f8fafc",
                     borderRadius: "14px",
-                    padding: "1.25rem 1.5rem",
+                    padding: "1.25rem",
                     border: "1px solid #e2e8f0",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    gap: "1rem",
-                    alignItems: "center",
-                    justifyContent: "space-between",
+                    marginBottom:"1rem",
+                    
                   }}
                 >
+                  <div style={{
+                    display:"flex",
+                    flexWrap:"wrap" as const,
+                    gap:"1rem",
+                    alignItems:"center",
+                    justifyContent:"space-between"
+                  }}>
                   {/* Avatar + Info */}
                   <div
                     style={{
@@ -322,6 +326,7 @@ export default function AdminDashboard() {
                       </button>
                     </div>
                   )}
+                </div>
                 </div>
               ))}
             </div>

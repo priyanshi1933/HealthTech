@@ -25,6 +25,9 @@ import {
   deleteRecurring,
   deleteBlock,
   getSlotsForDate,
+  addLeave,
+  getLeaves,
+  removeLeaveHandler,
 } from "../controllers/availability.controller";
 import {
   book,
@@ -119,6 +122,10 @@ router.get("/appointments/:id", verifyToken, singleAppointment);
 router.patch("/appointments/:id/cancel", verifyToken, cancel);
 router.patch("/appointments/:id/complete", verifyToken, verifyDoctor, complete);
 router.patch("/appointments/:id/reschedule", verifyToken, reschedule);
+
+router.post("/leaves/add",verifyToken,verifyDoctor,addLeave);
+router.get("/leaves",verifyToken,verifyDoctor,getLeaves);
+router.delete("/leaves/:id",verifyToken,verifyDoctor,removeLeaveHandler);
 
 router.post("/prescriptions/write",verifyToken,verifyDoctor,writePrescription);
 router.get("/prescriptions/my",verifyToken,myPrescriptions);

@@ -13,7 +13,6 @@ export default function ViewPrescription() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        // ✅ this GET call triggers the audit log automatically
         const res = await api.get(`/prescriptions/${appointmentId}`);
         setPrescription(res.data.data);
       } catch (err: any) {

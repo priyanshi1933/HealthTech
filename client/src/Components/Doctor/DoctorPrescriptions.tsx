@@ -145,7 +145,7 @@ export default function DoctorPrescriptions() {
                     </div>
                   </div>
 
-                  {/* ✅ two buttons side by side */}
+                 
                   <div
                     style={{
                       display: "flex",
@@ -159,7 +159,7 @@ export default function DoctorPrescriptions() {
                         navigate(
                           `/prescriptions/view/${p.appointmentId?._id || p.appointmentId}`,
                         )
-                      } // ✅ new
+                      } 
                       style={{
                         padding: "8px 20px",
                         borderRadius: "10px",

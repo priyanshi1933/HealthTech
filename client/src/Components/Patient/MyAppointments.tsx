@@ -19,7 +19,7 @@ function AppointmentTimer({
       const now = new Date().getTime();
       const start = new Date(slotTime).getTime();
       const end = start + duration * 60 * 1000;
-      const graceEnd = end + 5 * 60 * 1000; 
+      const graceEnd = end + 5 * 60 * 1000;
 
       if (now < start) {
         setStatus("upcoming");
@@ -98,7 +98,7 @@ function AppointmentTimer({
     );
   }
 
-  return null; 
+  return null;
 }
 
 export default function MyAppointments() {
@@ -440,7 +440,7 @@ export default function MyAppointments() {
                 )}
 
                 {/* Confirmation email */}
-                {emailPreviews[apt._id] && (
+                {/* {emailPreviews[apt._id] && (
                   <div style={{ marginTop: "10px" }}>
                     <a
                       href={emailPreviews[apt._id]}
@@ -460,7 +460,55 @@ export default function MyAppointments() {
                       📬 View Confirmation Email
                     </a>
                   </div>
-                )}
+                )} */}
+                {/* Confirmation email — only show if NOT cancelled */}
+                {emailPreviews[apt._id] &&
+                  apt.status !== "cancelled" &&
+                  apt.status !== "rescheduled" && (
+                    <div style={{ marginTop: "10px" }}>
+                      <a
+                        href={emailPreviews[apt._id]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: "6px 16px",
+                          borderRadius: "8px",
+                          background: "linear-gradient(135deg,#2563eb,#06b6d4)",
+                          color: "white",
+                          fontWeight: 700,
+                          fontSize: "0.82rem",
+                          textDecoration: "none",
+                          display: "inline-block",
+                        }}
+                      >
+                        📬 View Confirmation Email
+                      </a>
+                    </div>
+                  )}
+
+                {/* Cancellation email — only show if cancelled */}
+                {apt.status === "cancelled" &&
+                  emailPreviews[`cancel_${apt._id}`] && (
+                    <div style={{ marginTop: "10px" }}>
+                      <a
+                        href={emailPreviews[`cancel_${apt._id}`]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: "6px 16px",
+                          borderRadius: "8px",
+                          background: "#6b21a8",
+                          color: "white",
+                          fontWeight: 700,
+                          fontSize: "0.82rem",
+                          textDecoration: "none",
+                          display: "inline-block",
+                        }}
+                      >
+                        📬 View Cancellation Email
+                      </a>
+                    </div>
+                  )}
 
                 {/* Join video call */}
                 {apt.status === "confirmed" && apt.roomId && (
